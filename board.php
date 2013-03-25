@@ -37,8 +37,12 @@ class Board {
 
   public function cli_display()
   {
+    echo "  a b c d e f g h\n";
+    echo "  ________________ \n";
     foreach($this->board as $row_key => $row)
     {
+      $row_num = (8 - $row_key);
+      echo "{$row_num}|";
       foreach($row as $col_key => $col)
       {
         if ($col != NULL)
@@ -58,9 +62,10 @@ class Board {
           echo($this->unichr("9633") . " "); // print white square
         }
       }
-      echo("\n");
+      echo("|\n");
     }
-    echo("\n");
+    echo("  ________________ \n");
+    echo("  a b c d e f g h\n");
   }
 
   public function populate($pieces)

@@ -4,17 +4,24 @@
   require 'human_player.php';
   require 'computer_player.php';
 
+  // for debugging
+  require './kint/Kint.class.php';
+
 class Game
 {
 
   var $turn;
   var $board;
   var $initial_positions;
+  var $captured_pieces;
+  var $white;
+  var $black;
 
   public function __construct()
   {
     $this->board = new Board;
     $this->set_initial_positions();
+    $this->turn = 0;
   }
 
   public function play()
@@ -22,16 +29,33 @@ class Game
     $checkmate = FALSE;
     while (!$checkmate)
     {
+      // add a line to check for check/checkmate
+      $current_player = (($this->turn % 2 == 0) ? $this->white : $this->black);
       $this->board->cli_display();
-      echo($this->get_valid_move() . "\n");
+      echo($this->get_valid_move($current_player) . "\n");
+      $this->turn++;
+      $this->make_move();
     }
   }
 
-  public function get_valid_move()
+  public function get_valid_move($player)
   {
-    fwrite(STDOUT, "Where would you like to move? (eg, a4 to a5)\n");
-    $varin = trim(fgets(STDIN)); // this should be a while loop
-    return $varin;               // keep asking until it is valid
+    while (TRUE)
+    {
+      $this->prompt_move($player);
+      $to_and_from = $player->get_move();
+      if (isset($to_and_from))
+        {
+          break;
+        }
+    }
+    return $to_and_from;
+  }
+
+  public function make_move($to_and_from)
+  {
+    //$this->board
+    // do some crap where you make the move
   }
 
   public function set_initial_positions()
@@ -65,12 +89,36 @@ class Game
     return $chess_set;
   }
 
-  public function setup_game()
+  public function setup_game($options = array())
   {
-    $this->board = new Board;
-    $this->board->populate($this->return_chess_set());
+    $default_opts = array("load_game" => FALSE, "player_count" => 2);
+    $options = array_merge($default_opts, $options);
+    if ($options['load_game'])
+    {
+      // do some crap here where you unserialize the game object from a previous game.
+    }
+    // later on there should be an option where the computer can play the computer (hehe).
+    else
+    {
+      $this->board = new Board;
+      $this->board->populate($this->return_chess_set());
+      $this->instantiate_players();
+    }
   }
 
+  public function instantiate_players($player_count = 2)
+  {
+    // Later on put some crap in here where they can choose to have...
+    // computer v computer, human v human, human v computer.
+    // use php switch() method
+    $this->white = new HumanPlayer("White", "Supsupin");
+    $this->black = new HumanPlayer("Black", "Theodore");
+  }
+
+  public function prompt_move($player)
+  {
+    echo("{$player->name}'s move: ");
+  }
 }
 
 function load()
