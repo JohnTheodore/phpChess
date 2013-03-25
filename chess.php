@@ -58,7 +58,7 @@ class Game
       {
         foreach($positions as $position)
         {
-          array_push($chess_set, new $chessman($position, $color));
+          $chess_set[] = new $chessman($position, $color);
           //echo "Color: {$color} \n";
           //echo "Chessman: {$chessman} \n";
           //echo "positions: ";
