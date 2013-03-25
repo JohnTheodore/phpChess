@@ -37,14 +37,14 @@ class Game
   public function set_initial_positions()
   {
     $this->initial_positions = array(
-    "King"    => array("white" => array(array(7, 4)), "black" => array(array(0, 4)) ),
-    "Queen"   => array("white" => array(array(7, 3)), "black" => array(array(0, 3)) ),
-    "Bishop"  => array("white" => array(array(7, 2), array(7, 5)), "black" => array(array(0, 2), array(0, 5)) ),
-    "Knight"  => array("white" => array(array(7, 1), array(7, 6)), "black" => array(array(0, 1), array(0, 6)) ),
-    "Rook"    => array("white" => array(array(7, 0), array(7, 7)), "black" => array(array(0, 0), array(0, 7)) ),
-    "Pawn"    => array("white" => array(array(6, 0), array(6, 1), array(6, 2), array(6, 3), 
+    "King"    => array("black" => array(array(7, 4)), "white" => array(array(0, 4)) ),
+    "Queen"   => array("black" => array(array(7, 3)), "white" => array(array(0, 3)) ),
+    "Bishop"  => array("black" => array(array(7, 2), array(7, 5)), "white" => array(array(0, 2), array(0, 5)) ),
+    "Knight"  => array("black" => array(array(7, 1), array(7, 6)), "white" => array(array(0, 1), array(0, 6)) ),
+    "Rook"    => array("black" => array(array(7, 0), array(7, 7)), "white" => array(array(0, 0), array(0, 7)) ),
+    "Pawn"    => array("black" => array(array(6, 0), array(6, 1), array(6, 2), array(6, 3), 
                          array(6, 4), array(6, 5), array(6, 6), array(6, 7) ),
-                 "black" => array(array(1, 0), array(1, 1), array(1, 2), array(1, 3), 
+                       "white" => array(array(1, 0), array(1, 1), array(1, 2), array(1, 3), 
                          array(1, 4), array(1, 5), array(1, 6), array(1, 7) ))
     );
   }
@@ -58,12 +58,7 @@ class Game
       {
         foreach($positions as $position)
         {
-          $chess_set[] = new $chessman($position, $color);
-          //echo "Color: {$color} \n";
-          //echo "Chessman: {$chessman} \n";
-          //echo "positions: ";
-          //var_dump($position);
-          //echo "\n";
+          array_push($chess_set, new $chessman($position, $color));
         }
       }
     }

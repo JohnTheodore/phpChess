@@ -25,12 +25,13 @@ class Board {
 
   public function set_visuals()
   {
-    $this->cli_bw_visuals = array('King'    => ["9812", "9818"],
-    'Queen'   => array("9813", "9819"), // 0 == white, 1 == black
-    'Knight'  => array("9814", "9820"),
-    'Bishop'  => array("9815", "9821"),
-    'Rook'    => array("9816", "9822"),
-    'Pawn'    => array("9817", "9823")
+    $this->cli_bw_visuals = array(
+      'King'    => array("9812", "9818"),
+      'Queen'   => array("9813", "9819"), // 0 == white, 1 == black
+      'Knight'  => array("9814", "9820"),
+      'Bishop'  => array("9815", "9821"),
+      'Rook'    => array("9816", "9822"),
+      'Pawn'    => array("9817", "9823")
     );
   }
 
@@ -42,7 +43,11 @@ class Board {
       {
         if ($col != NULL)
         {
-          echo("piece");
+          $piece_class = get_class($col);
+          $piece_color = (($col->color == "white") ? 0 : 1);
+          $piece_unicode = $this->cli_bw_visuals[$piece_class][$piece_color];
+          //var_dump($piece_unicode); die();
+          echo($this->unichr($piece_unicode) . " ");
         }
         elseif (($col == NULL) && ((($col_key + $row_key) % 2 == 0)))
         {
@@ -62,7 +67,7 @@ class Board {
   {
     foreach($pieces as $piece)
     {
-      $this->board[$piece[0]][$piece[1]] = $piece;
+      $this->board[$piece->position[0]][$piece->position[1]] = $piece;
     }
   }
 
