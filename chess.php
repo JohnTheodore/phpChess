@@ -47,49 +47,40 @@ class Game
     {
       $this->prompt_move($player);
       $src_and_dest = $player->get_move();
-      if ($this->is_valid_move($src_and_dest))
-        {
-          echo "wtf";
-          break;
-        }
+      if ($this->is_valid_move($src_and_dest, $player))
+        { break; }
     }
     return $src_and_dest;
   }
 
-  public function is_valid_move($src_and_dest)
-  {
+  public function is_valid_move($src_and_dest, $player)
+  { // I changed idioms to have it look cleaner since this method is so big.
+    if (($this->is_on_board($src_and_dest[0])) && ($this->is_on_board($src_and_dest[1])))
+    {
     $src = $src_and_dest[0];
     $dest = $src_and_dest[1];
-    if (!$this->is_on_board($src_and_dest))
-    // I should add a bunch of
-    // || (!some other condition) || (!some other condition) ???
-    {
-      return FALSE;
-    }
-    elseif ($src == $dest)
-    {
-      return FALSE;
+    $src_piece = $this->board->get($src);
+    $dest_piece = $this->board->get($dest);
     }
     else
-    {
-      echo "TRUE";
-      return TRUE;
-    }
+     { return FALSE; } // need valid src and dest positions
+
+    if ($src_piece->color != $player->color)
+      { echo "wrong color\n"; return FALSE; } // Only move your own piece.
+    elseif ($src == $dest)
+      { echo "different pls\n"; return FALSE; } // src and dest should be different
+    elseif ($src_piece == NULL)
+      { echo "no piece\n"; return FALSE; } // There is no piece at that src
+    elseif (($dest_piece != NULL) && ($src_piece->color == $dest_piece->color))
+      { echo "no friendly fire\n"; return FALSE; } // no friendly fire
+    else
+      { return TRUE; } // allow the move
   }
 
-  public function is_on_board($src_and_dest)
+  public function is_on_board($position)
   {
-    $flat_ints = array_values($src_and_dest[0]);
-    $flat_ints[] = $src_and_dest[1][0];
-    $flat_ints[] = $src_and_dest[1][1];
-    foreach($flat_ints as $int) // this method is ugly, it would be so short in ruby.
-    {
-      if (!preg_match('/^[0-7]+$/', $int))
-      {
-        return FALSE;
-      }
-    }
-    return TRUE;
+    return (preg_match('/^[0-7]+$/', $position[0]) &&
+    preg_match('/^[0-7]+$/', $position[1]));
   }
 
   public function make_move($src_and_dest)
@@ -109,14 +100,14 @@ class Game
   public function set_initial_positions()
   {
     $this->initial_positions = array(
-    "King"    => array("black" => array(array(7, 4)), "white" => array(array(0, 4)) ),
-    "Queen"   => array("black" => array(array(7, 3)), "white" => array(array(0, 3)) ),
-    "Bishop"  => array("black" => array(array(7, 2), array(7, 5)), "white" => array(array(0, 2), array(0, 5)) ),
-    "Knight"  => array("black" => array(array(7, 1), array(7, 6)), "white" => array(array(0, 1), array(0, 6)) ),
-    "Rook"    => array("black" => array(array(7, 0), array(7, 7)), "white" => array(array(0, 0), array(0, 7)) ),
-    "Pawn"    => array("black" => array(array(6, 0), array(6, 1), array(6, 2), array(6, 3), 
+    "King"    => array("White" => array(array(7, 4)), "Black" => array(array(0, 4)) ),
+    "Queen"   => array("White" => array(array(7, 3)), "Black" => array(array(0, 3)) ),
+    "Bishop"  => array("White" => array(array(7, 2), array(7, 5)), "Black" => array(array(0, 2), array(0, 5)) ),
+    "Knight"  => array("White" => array(array(7, 1), array(7, 6)), "Black" => array(array(0, 1), array(0, 6)) ),
+    "Rook"    => array("White" => array(array(7, 0), array(7, 7)), "Black" => array(array(0, 0), array(0, 7)) ),
+    "Pawn"    => array("White" => array(array(6, 0), array(6, 1), array(6, 2), array(6, 3), 
                          array(6, 4), array(6, 5), array(6, 6), array(6, 7) ),
-                       "white" => array(array(1, 0), array(1, 1), array(1, 2), array(1, 3), 
+                       "Black" => array(array(1, 0), array(1, 1), array(1, 2), array(1, 3), 
                          array(1, 4), array(1, 5), array(1, 6), array(1, 7) ))
     );
   }
@@ -135,6 +126,11 @@ class Game
       }
     }
     return $chess_set;
+  }
+
+  public function is_check($player)
+  {
+    return false; // blah blah, put logic in here later.
   }
 
   public function setup_game($options = array())

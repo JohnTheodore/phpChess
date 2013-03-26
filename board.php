@@ -27,7 +27,7 @@ class Board {
   {
     $this->cli_bw_visuals = array(
       'King'    => array("9812", "9818"),
-      'Queen'   => array("9813", "9819"), // 0 == white, 1 == black
+      'Queen'   => array("9813", "9819"), // 0 == black, 1 == white
       'Knight'  => array("9814", "9820"),
       'Bishop'  => array("9815", "9821"),
       'Rook'    => array("9816", "9822"),
@@ -48,7 +48,7 @@ class Board {
         if ($col != NULL)
         {
           $piece_class = get_class($col);
-          $piece_color = (($col->color == "white") ? 0 : 1);
+          $piece_color = (($col->color == "White") ? 1 : 0);
           $piece_unicode = $this->cli_bw_visuals[$piece_class][$piece_color];
           //var_dump($piece_unicode); die();
           echo($this->unichr($piece_unicode) . " ");
@@ -78,6 +78,7 @@ class Board {
 
   public function get($position)
   {
+    var_dump($position);
     return $this->board[$position[0]][$position[1]];
   }
 
