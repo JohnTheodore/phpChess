@@ -22,6 +22,7 @@ class Game
     $this->board = new Board;
     $this->set_initial_positions();
     $this->turn = 0;
+    $this->captured_pieces = array();
   }
 
   public function play()
@@ -44,7 +45,7 @@ class Game
     {
       $this->prompt_move($player);
       $to_and_from = $player->get_move();
-      if (isset($to_and_from))
+      if (is_valid_move($src_and_dest))
         {
           break;
         }
@@ -52,7 +53,20 @@ class Game
     return $to_and_from;
   }
 
-  public function make_move($to_and_from)
+  public function is_valid_move($src_and_dest)
+  {
+    return FALSE if (!is_on_board($src_and_dest));
+  }
+
+  public function is_on_board($src_and_dest)
+  {
+    $flat_ints = $src_and_dest[0];
+    array_push($flat_ints, $src_and_dest[1]);
+    var_dump($flat_ints); die();
+    preg_match('/^[0-7]+$/', $src_and_dest[0][0]);
+  }
+
+  public function make_move($src_and_dest)
   {
     //$this->board
     // do some crap where you make the move
@@ -73,7 +87,7 @@ class Game
     );
   }
 
-  public function return_chess_set()
+  public function get_chess_set()
   {
     $chess_set = array();
     foreach($this->initial_positions as $chessman => $colors)
@@ -101,7 +115,7 @@ class Game
     else
     {
       $this->board = new Board;
-      $this->board->populate($this->return_chess_set());
+      $this->board->populate($this->get_chess_set());
       $this->instantiate_players();
     }
   }
@@ -117,7 +131,7 @@ class Game
 
   public function prompt_move($player)
   {
-    echo("{$player->name}'s move: ");
+    echo("{$player->name}'s move ({$player->color}): ");
   }
 }
 
@@ -129,9 +143,5 @@ function load()
 }
 
 load();
-
-//$game = new Game;
-//$game->setup_game();
-//echo($game->return_chess_set() . "\n");
   
 ?>

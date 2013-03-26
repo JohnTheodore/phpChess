@@ -62,10 +62,10 @@ class Board {
           echo($this->unichr("9633") . " "); // print white square
         }
       }
-      echo("|\n");
+      echo("|{$row_num}\n");
     }
     echo("  ________________ \n");
-    echo("  a b c d e f g h\n");
+    echo("  a b c d e f g h\n\n");
   }
 
   public function populate($pieces)
