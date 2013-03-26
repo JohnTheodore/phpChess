@@ -14,12 +14,12 @@ class Piece
 
 class Pawn extends Piece
 {
-  var $moves;
-
-  public function __construct()
-  {
-    $this->moves = 0;
-  }
+  //var $moves;
+  // this breaks things, i'm not sure why. I think i need parent::blahblah
+  //public function __construct()
+  //{
+  //  $this->moves = 0;
+  //}
 }
 
 class Rook extends Piece
