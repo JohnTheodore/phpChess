@@ -73,10 +73,13 @@ class Game
       { echo "no piece\n"; return FALSE; } // There is no piece at that src
     elseif (($dest_piece != NULL) && ($src_piece->color == $dest_piece->color))
       { echo "no friendly fire\n"; return FALSE; } // no friendly fire
-    elseif (get_class($src_piece) == "Pawn")
-      { // fulfill some annoying corner case logic for pawns }
+    //elseif (get_class($src_piece) == "Pawn")
+     // { // fulfill some annoying corner case logic for pawns }
+    //elseif ( ( array_search($dest, $src_piece->get_possible_moves()) ) >= 0 )
+    //  { return TRUE; } // allow the move only if the piece get_possible_moves
+                       // contains the dest position
     else
-      { return TRUE; } // allow the move
+      { return FALSE; }
   }
 
   public function is_on_board($position)

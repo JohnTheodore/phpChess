@@ -37,6 +37,7 @@ class Board {
 
   public function cli_display()
   {
+    var_dump($this->board);
     echo "  a b c d e f g h\n";
     echo "  ________________ \n";
     foreach($this->board as $row_key => $row)

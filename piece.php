@@ -34,10 +34,10 @@ class Knight extends Piece
     $x = $this->position[0];
     $y = $this->position[1];
     return array(
-      array( ($x + 2), ($y + 1) ), array( ($x + 2), (y - 1) ),
-      array( ($x - 2), ($y + 1) ), array( ($x - 2), (y - 1) ),
-      array( ($x + 1), ($y + 2) ), array( ($x + 1), (y - 2) ),
-      array( ($x - 1), ($y + 2) ), array( ($x - 1), (y - 2) )
+      array( ($x + 2), ($y + 1) ), array( ($x + 2), ($y - 1) ),
+      array( ($x - 2), ($y + 1) ), array( ($x - 2), ($y - 1) ),
+      array( ($x + 1), ($y + 2) ), array( ($x + 1), ($y - 2) ),
+      array( ($x - 1), ($y + 2) ), array( ($x - 1), ($y - 2) )
     ); // some of these will be off_board, though user input was already
        // filtered by is_valid_move, so it is fine.
        // It is unnecessary processor work to eliminate offboard moves
