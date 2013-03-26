@@ -73,6 +73,8 @@ class Game
       { echo "no piece\n"; return FALSE; } // There is no piece at that src
     elseif (($dest_piece != NULL) && ($src_piece->color == $dest_piece->color))
       { echo "no friendly fire\n"; return FALSE; } // no friendly fire
+    elseif (get_class($src_piece) == "Pawn")
+      { // fulfill some annoying corner case logic for pawns }
     else
       { return TRUE; } // allow the move
   }

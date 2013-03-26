@@ -78,7 +78,6 @@ class Board {
 
   public function get($position)
   {
-    var_dump($position);
     return $this->board[$position[0]][$position[1]];
   }
 
