@@ -91,9 +91,9 @@ class Game
   public function is_possible_move($src_piece, $dest)
   {
     $possible_moves = $src_piece->get_possible_moves();
-    $answer = array_search($dest, $possible_moves);
-    if ($answer == FALSE) { return FALSE; }
-    else { return TRUE; }
+    $allowable = (bool)array_search($dest, $possible_moves);
+    var_dump($allowable);
+    return $allowable;
   }
 
   public function make_move($src_and_dest)
