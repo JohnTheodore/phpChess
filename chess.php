@@ -30,12 +30,14 @@ class Game
     $checkmate = FALSE;
     while (!$checkmate)
     {
-      // add a line to check for check/checkmate
+      // add a line to check for check/checkmate... this method is going to be difficult.
+      // I need to write a method for each piece, so I can know that pieces available moves
+      // also have a separate method for is_check
       $current_player = (($this->turn % 2 == 0) ? $this->white : $this->black);
       $this->board->cli_display();
-      echo($this->get_valid_move($current_player) . "\n");
+      $current_move = $this->get_valid_move($current_player);
       $this->turn++;
-      $this->make_move();
+      $this->make_move($current_move);
     }
   }
 
@@ -44,33 +46,64 @@ class Game
     while (TRUE)
     {
       $this->prompt_move($player);
-      $to_and_from = $player->get_move();
-      if (is_valid_move($src_and_dest))
+      $src_and_dest = $player->get_move();
+      if ($this->is_valid_move($src_and_dest))
         {
+          echo "wtf";
           break;
         }
     }
-    return $to_and_from;
+    return $src_and_dest;
   }
 
   public function is_valid_move($src_and_dest)
   {
-    return (!is_on_board($src_and_dest)); // I should add a bunch of
-    // || (!some other condition) || (!some other condition)
+    $src = $src_and_dest[0];
+    $dest = $src_and_dest[1];
+    if (!$this->is_on_board($src_and_dest))
+    // I should add a bunch of
+    // || (!some other condition) || (!some other condition) ???
+    {
+      return FALSE;
+    }
+    elseif ($src == $dest)
+    {
+      return FALSE;
+    }
+    else
+    {
+      echo "TRUE";
+      return TRUE;
+    }
   }
 
   public function is_on_board($src_and_dest)
   {
-    $flat_ints = $src_and_dest[0];
-    array_push($flat_ints, $src_and_dest[1]);
-    var_dump($flat_ints); die();
-    preg_match('/^[0-7]+$/', $src_and_dest[0][0]);
+    $flat_ints = array_values($src_and_dest[0]);
+    $flat_ints[] = $src_and_dest[1][0];
+    $flat_ints[] = $src_and_dest[1][1];
+    foreach($flat_ints as $int) // this method is ugly, it would be so short in ruby.
+    {
+      if (!preg_match('/^[0-7]+$/', $int))
+      {
+        return FALSE;
+      }
+    }
+    return TRUE;
   }
 
   public function make_move($src_and_dest)
   {
-    //$this->board
-    // do some crap where you make the move
+    $src = $src_and_dest[0];
+    $dest = $src_and_dest[1];
+    $mobile_piece = $this->board->get($src);
+    $mobile_piece->position = $dest;
+
+    if ($this->board->get($dest) != NULL)
+    {
+      // do some crap in here when you kill/capture
+    }
+    $this->board->move($src, $dest);
   }
 
   public function set_initial_positions()

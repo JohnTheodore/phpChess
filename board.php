@@ -76,6 +76,17 @@ class Board {
     }
   }
 
+  public function get($position)
+  {
+    return $this->board[$position[0]][$position[1]];
+  }
+
+  public function move($src, $dest)
+  {
+    $mobile_piece = ($this->board[$src[0]][$src[1]]);
+    $this->board[$src[0]][$src[1]] = NULL;
+    $this->board[$dest[0]][$dest[1]] = $mobile_piece;
+  }
 }
 
 ?>
