@@ -55,7 +55,8 @@ class Game
 
   public function is_valid_move($src_and_dest)
   {
-    return FALSE if (!is_on_board($src_and_dest));
+    return (!is_on_board($src_and_dest)); // I should add a bunch of
+    // || (!some other condition) || (!some other condition)
   }
 
   public function is_on_board($src_and_dest)
