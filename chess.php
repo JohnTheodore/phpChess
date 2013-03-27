@@ -73,8 +73,8 @@ class Game
       { echo "no piece\n"; return FALSE; } // There is no piece at that src
     elseif (($dest_piece != NULL) && ($src_piece->color == $dest_piece->color))
       { echo "no friendly fire\n"; return FALSE; } // no friendly fire
-    elseif (get_class($src_piece) == "Pawn")
-      { return FALSE; } // fulfill some annoying corner case logic for pawns 
+    //elseif (get_class($src_piece) == "Pawn")
+    //  { return FALSE; } // fulfill some annoying corner case logic for pawns 
     elseif ( $this->is_possible_move($src_piece, $dest, $player) )
       { return TRUE; } // allow the move only if the piece get_possible_moves
                        // contains the dest position
@@ -86,7 +86,6 @@ class Game
   {
     $possible_moves = $src_piece->get_possible_moves($this->board, $player);
     return array_search($dest, $possible_moves) !== FALSE;
-    //return $allowable;
   }
 
   public function make_move($src_and_dest)
@@ -95,12 +94,19 @@ class Game
     $dest = $src_and_dest[1];
     $mobile_piece = $this->board->get($src);
     $mobile_piece->position = $dest;
+    $mobile_piece->moves++;
 
     if ($this->board->get($dest) != NULL)
     {
-      // do some crap in here when you kill/capture
+      $this->captured_pieces[] = $this->board->get($dest);
+      $this->announce_capture($this->board->get($dest));
     }
     $this->board->move($src, $dest);
+  }
+
+  public function unmake_move()
+  {
+    // If the move causes the acting player to be in check, it should unmake the move before it displays the board.
   }
 
   public function set_initial_positions()
@@ -158,7 +164,7 @@ class Game
 
   public function other_player($player)
   {
-    
+    return ( ($player->color == "White") ? $this->black : $this->white );
   }
 
   public function instantiate_players($player_count = 2)
@@ -176,6 +182,13 @@ class Game
     echo("{$player->name}'s move ({$player->color}): ");
   }
 
+  public function announce_capture($piece)
+  {
+    $capturer = ($piece->color == "White") ? $this->black : $this->white;
+    $capturee = $this->other_player($capturer);
+    $piece_class = get_class($piece);
+    echo("{$capturer->name} captured {$capturee->name}'s {$capturee->color} {$piece_class} \n");
+  }
 
 
 }
