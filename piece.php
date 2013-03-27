@@ -72,11 +72,10 @@ class Pawn extends Piece
         { $possible_moves[] = array( ($x - 2), $y); } // allowed to go two forward if both spaces open
       if ($board->get(($x - 1), $y) == NULL)
         { $possible_moves[] = array(($x - 1), $y); }
-      if ($board->get(($x - 1), $y - 1)->color != $this->other_color($this->color))
+      if ( is_object($board->get(($x - 1), $y - 1)) && ($board->get(($x - 1), $y - 1)->color != $this->other_color($this->color)))
         { $possible_moves[] = array(($x - 1), $y - 1); }
-      if ($board->get(($x - 1), $y + 1)->color != $this->other_color($this->color))
+      if ( is_object($board->get(($x - 1), $y + 1)->color) && ($board->get(($x - 1), $y + 1)->color != $this->other_color($this->color)))
         { $possible_moves[] = array(($x - 1), $y + 1); }
-      echo("Available moves for piece: " . $this->array_to_english($possible_moves) . "\n");
       return $possible_moves;
     }
     elseif ($this->color == "Black")

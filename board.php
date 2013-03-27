@@ -83,7 +83,8 @@ class Board {
 
   public function get($position)
   {
-    return $this->board[$position[0]][$position[1]];
+    if ($this->is_on_board($position))
+      { return $this->board[$position[0]][$position[1]]; }
   }
 
   public function move($src, $dest)
