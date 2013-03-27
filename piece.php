@@ -3,6 +3,7 @@ class Piece
 {
   var $position;
   var $color;
+  var $moves;
 
   public function __construct($position, $color)
   {
@@ -10,16 +11,37 @@ class Piece
     $this->color = $color;
   }
 
+  public function filter_on_board_possibles($impossible_positions, $board)
+  {
+    $onboard_moves = $impossible_positions;
+    foreach($onboard_moves as $key => $position)
+    {
+      if (!$board->is_on_board($position))
+      {
+        unset($onboard_moves[$key]);
+      }
+    }
+    return $onboard_moves;
+  }
+
+  public function filter_no_friendly_fire($positions, $board, $player)
+  {
+    $no_friendly_fire = $positions;
+    foreach($no_friendly_fire as $key => $position)
+    {
+      if ($board->get($position)->color === $player->color)
+      {
+        unset($no_friendly_fire[$key]);
+      }
+    }
+    return $no_friendly_fire;
+  }
+
 }
 
 class Pawn extends Piece
 {
-  //var $moves;
-  // this breaks things, i'm not sure why. I think i need parent::blahblah
-  //public function __construct()
-  //{
-  //  $this->moves = 0;
-  //}
+
 }
 
 class Rook extends Piece
@@ -29,18 +51,20 @@ class Rook extends Piece
 
 class Knight extends Piece
 {
-  public function get_possible_moves()
+  public function get_possible_moves($board, $player)
   {
     $x = $this->position[0];
     $y = $this->position[1];
-    return array(
+    $impossible_moves = array(
       array( ($x + 2), ($y + 1) ), array( ($x + 2), ($y - 1) ),
       array( ($x - 2), ($y + 1) ), array( ($x - 2), ($y - 1) ),
       array( ($x + 1), ($y + 2) ), array( ($x + 1), ($y - 2) ),
       array( ($x - 1), ($y + 2) ), array( ($x - 1), ($y - 2) )
-    ); // some of these will be off_board, though user input was already
-       // filtered by is_valid_move, so it is fine.
-       // It is unnecessary processor work to eliminate offboard moves
+    );
+    $onboard_moves = parent::filter_on_board_possibles($impossible_moves, $board);
+    $no_friendly_fire = parent::filter_no_friendly_fire($onboard_moves, $board, $player);
+    var_dump($no_friendly_fire);
+    return $onboard_moves;
   }
 }
 

@@ -75,6 +75,12 @@ class Board {
     }
   }
 
+  public function is_on_board($position)
+  {
+    return (preg_match('/^[0-7]+$/', $position[0]) &&
+    preg_match('/^[0-7]+$/', $position[1]));
+  }
+
   public function get($position)
   {
     return $this->board[$position[0]][$position[1]];

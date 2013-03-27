@@ -55,7 +55,7 @@ class Game
 
   public function is_valid_move($src_and_dest, $player)
   { // I changed idioms to have it look cleaner since this method is so big.
-    if (($this->is_on_board($src_and_dest[0])) && ($this->is_on_board($src_and_dest[1])))
+    if (($this->board->is_on_board($src_and_dest[0])) && ($this->board->is_on_board($src_and_dest[1])))
     {
     $src = $src_and_dest[0];
     $dest = $src_and_dest[1];
@@ -75,25 +75,18 @@ class Game
       { echo "no friendly fire\n"; return FALSE; } // no friendly fire
     elseif (get_class($src_piece) == "Pawn")
       { return FALSE; } // fulfill some annoying corner case logic for pawns 
-    elseif ( $this->is_possible_move($src_piece, $dest) )
+    elseif ( $this->is_possible_move($src_piece, $dest, $player) )
       { return TRUE; } // allow the move only if the piece get_possible_moves
                        // contains the dest position
     else
       { return FALSE; }
   }
 
-  public function is_on_board($position)
+  public function is_possible_move($src_piece, $dest, $player)
   {
-    return (preg_match('/^[0-7]+$/', $position[0]) &&
-    preg_match('/^[0-7]+$/', $position[1]));
-  }
-
-  public function is_possible_move($src_piece, $dest)
-  {
-    $possible_moves = $src_piece->get_possible_moves();
-    $allowable = (bool)array_search($dest, $possible_moves);
-    var_dump($allowable);
-    return $allowable;
+    $possible_moves = $src_piece->get_possible_moves($this->board, $player);
+    return array_search($dest, $possible_moves) !== FALSE;
+    //return $allowable;
   }
 
   public function make_move($src_and_dest)
@@ -163,6 +156,11 @@ class Game
     }
   }
 
+  public function other_player($player)
+  {
+    
+  }
+
   public function instantiate_players($player_count = 2)
   {
     // Later on put some crap in here where they can choose to have...
@@ -172,10 +170,14 @@ class Game
     $this->black = new HumanPlayer("Black", "Theodore");
   }
 
+ // ### INTERFACE METHODS BELOW ### //
   public function prompt_move($player)
   {
     echo("{$player->name}'s move ({$player->color}): ");
   }
+
+
+
 }
 
 function load()
