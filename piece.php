@@ -67,7 +67,7 @@ class Piece
 
   public function get_straight_lines($src, $board)
   {
-    $deltas = array( array(1, 1), array(1, -1), array(-1, 1), array(-1, -1) ); // the 4 directions diagonals can go
+    $deltas = array( array(-1, 0), array(1, 0), array(0, -1), array(0, 1) ); // up, down, left, right then hold a, then press start. 
     $possible_moves = array();
     foreach($delta as $delta)
     {
@@ -84,7 +84,7 @@ class Pawn extends Piece
     $x = $this->position[0];
     $y = $this->position[1];
     $moves = $this->moves;
-    if ($this->color == "White")bin
+    if ($this->color == "White")
     {
       $possible_moves = array();
       if ($board->get(array(($x - 1), $y)) == NULL)
