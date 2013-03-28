@@ -187,7 +187,7 @@ class Game
     $capturer = ($piece->color == "White") ? $this->black : $this->white;
     $capturee = $this->other_player($capturer);
     $piece_class = get_class($piece);
-    echo("{$capturer->name} captured {$capturee->name}'s {$capturee->color} {$piece_class} \n");
+    echo("\n\n{$capturer->name} captured {$capturee->name}'s {$capturee->color} {$piece_class}!!! \n\n");
   }
 
 

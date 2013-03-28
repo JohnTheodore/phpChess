@@ -37,11 +37,6 @@ class Piece
     return $no_friendly_fire;
   }
 
-  public function other_color($color)
-  {
-    return ( ($color == "White") ? "Black" : "White" );
-  }
-
   public function array_to_english($positions_array)
   {
     $english_positions = "";
@@ -66,31 +61,32 @@ class Pawn extends Piece
     if ($this->color == "White")
     {
       $possible_moves = array();
-      if ($board->get(($x - 1), $y) == NULL)
+      if ($board->get(array(($x - 1), $y)) == NULL)
         { $possible_moves[] = array( ($x - 1), $y); } // allowed to go one forward if the space is empty.
-      if (($moves == 0) && ($board->get(($x - 1), $y) == NULL) && ($board->get(($x - 2), $y) == NULL))
+      if (($moves == 0) && ($board->get(array(($x - 1), $y)) == NULL) && ($board->get(array(($x - 2), $y)) == NULL))
         { $possible_moves[] = array( ($x - 2), $y); } // allowed to go two forward if both spaces open
-      if ($board->get(($x - 1), $y) == NULL)
-        { $possible_moves[] = array(($x - 1), $y); }
-      if ( is_object($board->get(($x - 1), $y - 1)) && ($board->get(($x - 1), $y - 1)->color != $this->other_color($this->color)))
-        { $possible_moves[] = array(($x - 1), $y - 1); }
-      if ( is_object($board->get(($x - 1), $y + 1)->color) && ($board->get(($x - 1), $y + 1)->color != $this->other_color($this->color)))
-        { $possible_moves[] = array(($x - 1), $y + 1); }
+      if ( is_object($board->get(array(($x - 1), $y - 1))) && 
+      ($board->get(($x - 1), $y - 1)->color != $this->color))
+        { $possible_moves[] = array(($x - 1), $y - 1); }  // allowed to attack diagonally
+      if ( is_object($board->get(array(($x - 1), $y + 1))) && 
+      ($board->get(array(($x - 1), $y + 1))->color != $this->color) )
+        { $possible_moves[] = array(($x - 1), $y + 1); }  //  allowed to attack diagonally
+      echo("Available moves for piece: " . $this->array_to_english($possible_moves) . "\n");
       return $possible_moves;
     }
     elseif ($this->color == "Black")
     {
       $possible_moves = array();
-      if ($board->get(($x + 1), $y) == NULL)
+      if ($board->get(array(($x + 1), $y)) == NULL)
         { $possible_moves[] = array( ($x + 1), $y); } // allowed to go one forward if the space is empty.
-      if (($moves == 0) && ($board->get(($x + 1), $y) == NULL) && ($board->get(($x - 2), $y) == NULL))
+      if (($moves == 0) && ($board->get(array(($x + 1), $y)) == NULL) && ($board->get(array(($x + 2), $y)) == NULL))
         { $possible_moves[] = array( ($x + 2), $y); } // allowed to go two forward if both spaces open
-      if ($board->get(($x + 1), $y) == NULL)
-        { $possible_moves[] = array(($x + 1), $y); }
-      if ($board->get(($x + 1), $y - 1)->color != $this->other_color($this->color))
-        { $possible_moves[] = array(($x + 1), $y - 1); }
-      if ($board->get(($x + 1), $y + 1)->color != $this->other_color($this->color))
-        { $possible_moves[] = array(($x + 1), $y + 1); }
+      if ( is_object($board->get(array(($x + 1), $y - 1))) && 
+      ($board->get(($x + 1), $y - 1)->color != $this->color))
+        { $possible_moves[] = array(($x + 1), $y - 1); }  // allowed to attack diagonally
+      if ( is_object($board->get(array(($x + 1), $y + 1))) && 
+      ($board->get(array(($x + 1), $y + 1))->color != $this->color) )
+        { $possible_moves[] = array(($x + 1), $y + 1); }  //  allowed to attack diagonally
       echo("Available moves for piece: " . $this->array_to_english($possible_moves) . "\n");
       return $possible_moves;
     }

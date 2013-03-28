@@ -4,7 +4,7 @@ php chess.php; // to run the game
 
 ++TODO
 * I'll need unit tests, php units tests look crappy compared to rspec.
-* Validate all the pieces
+* Validate the castle, bishop, queen and bishop.
 * castling/en passant
 * check
 * checkmate
