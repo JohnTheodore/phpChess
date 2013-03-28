@@ -4,6 +4,8 @@ class Piece
   var $position;
   var $color;
   var $moves;
+  var $straight_deltas = array( array(-1, 0), array(1, 0), array(0, -1), array(0, 1) );
+  var $diagonal_deltas = array( array(1, 1), array(1, -1), array(-1, 1), array(-1, -1) );
 
   public function __construct($position, $color)
   {
@@ -65,23 +67,8 @@ class Piece
     return $possible_moves;
   }
 
-  public function get_diagonal_lines($src, $board)
+  public function get_delta_lines($deltas, $src, $board)
   {
-    $deltas = array( array(1, 1), array(1, -1), array(-1, 1), array(-1, -1) ); // the 4 directions diagonals can go
-    $possible_moves = array();
-    foreach($deltas as $delta)
-    {
-      foreach($this->crawl_delta($src, $delta, $board) as $possible_move )
-      {
-        $possible_moves[] = $possible_move;
-      }
-    }
-    return $possible_moves;
-  }
-
-  public function get_straight_lines($src, $board)
-  {
-    $deltas = array( array(-1, 0), array(1, 0), array(0, -1), array(0, 1) ); // up, down, left, right then hold a, then press start. 
     $possible_moves = array();
     foreach($deltas as $delta)
     {
@@ -140,7 +127,7 @@ class Rook extends Piece
 {
   public function get_possible_moves($board, $player)
   {
-    $possible_moves = $this->get_straight_lines($this->position, $board);
+    $possible_moves = $this->get_delta_lines($this->straight_deltas, $this->position, $board);
     echo("Available moves for piece: " . $this->array_to_english($possible_moves) . "\n");
     return $possible_moves;
   }
@@ -169,7 +156,7 @@ class Bishop extends Piece
 {
   public function get_possible_moves($board, $player)
   {
-    $possible_moves = $this->get_diagonal_lines($this->position, $board);
+    $possible_moves = $this->get_delta_lines($this->diagonal_deltas, $this->position, $board);
     echo("Available moves for piece: " . $this->array_to_english($possible_moves) . "\n");
     return $possible_moves;
   }
@@ -179,11 +166,8 @@ class Queen extends Piece
 {
   public function get_possible_moves($board, $player)
   {
-    $possible_moves = $this->get_diagonal_lines($this->position, $board);
-    foreach($this->get_straight_lines($this->position, $board) as $possible_move)
-    {
-      $possible_moves[] = $possible_move;
-    }
+    $deltas = array_merge($this->diagonal_deltas, $this->straight_deltas);
+    $possible_moves = $this->get_delta_lines($deltas, $this->position, $board);
     echo("Available moves for piece: " . $this->array_to_english($possible_moves) . "\n");
     return $possible_moves;
   }
