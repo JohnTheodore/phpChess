@@ -9,3 +9,8 @@ php chess.php; // to run the game
 * check
 * checkmate
 * filter user input more so they can throw in garbage
+** I should run these tools on my code:
+PHP_CodeSniffer (phpcs)
+Linter (php -l)
+PHP Mess Detector (phpmd)
+Scheck (scheck, part of Facebook’s pfff toolchain)

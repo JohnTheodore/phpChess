@@ -61,7 +61,7 @@ class Board {
           echo($this->unichr("9633") . " "); // print white square
         }
       }
-      echo("|{$row_num}\n");
+      echo("|{$row_num}\n"); 
     }
     echo("  ________________ \n");
     echo("  a b c d e f g h\n\n");
