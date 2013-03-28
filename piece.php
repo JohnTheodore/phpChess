@@ -49,6 +49,32 @@ class Piece
     return $english_positions;
   }
 
+  public function crawl_delta($src, $delta, $board)
+  {
+    // run some recursive function to crawl the delta
+  }
+
+  public function get_diagonal_lines($src, $board)
+  {
+    $deltas = array( array(1, 1), array(1, -1), array(-1, 1), array(-1, -1) ); // the 4 directions diagonals can go
+    $possible_moves = array();
+    foreach($delta as $delta)
+    {
+      $possible_moves[] = $this->crawl_delta($src, $delta, $board);
+    }
+    return $possible_moves;
+  }
+
+  public function get_straight_lines($src, $board)
+  {
+    $deltas = array( array(1, 1), array(1, -1), array(-1, 1), array(-1, -1) ); // the 4 directions diagonals can go
+    $possible_moves = array();
+    foreach($delta as $delta)
+    {
+      $possible_moves[] = $this->crawl_delta($src, $delta, $board);
+    }
+    return $possible_moves;
+  }
 }
 
 class Pawn extends Piece
@@ -58,7 +84,7 @@ class Pawn extends Piece
     $x = $this->position[0];
     $y = $this->position[1];
     $moves = $this->moves;
-    if ($this->color == "White")
+    if ($this->color == "White")bin
     {
       $possible_moves = array();
       if ($board->get(array(($x - 1), $y)) == NULL)
