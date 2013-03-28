@@ -62,15 +62,6 @@ class Piece
         { break; }
       $current_square = array( ($current_square[0] + $delta[0]), ($current_square[1] + $delta[1]) ); 
     }
-    $src2 = implode(",", $src);
-    $delta2 = implode(",", $delta);
-    $src_color = $board->get($src)->color;
-    if (is_object($board->get($current_square)))
-      { $delta_color = $board->get($current_square)->color; }
-    else
-      { $delta_color = $board->get($current_square); }
-    $delta_position = implode(",", $current_square);
-    //echo("src_piece: {$src2}, src_color: {$src_color}, delta_color: {$delta_color} delta_position: {$delta_position}, delta direction: {$delta2}, possible_moves = {$this->array_to_english($possible_moves)}\n");
     return $possible_moves;
   }
 
@@ -94,7 +85,10 @@ class Piece
     $possible_moves = array();
     foreach($deltas as $delta)
     {
-      $possible_moves[] = $this->crawl_delta($src, $delta, $board);
+      foreach($this->crawl_delta($src, $delta, $board) as $possible_move )
+      {
+        $possible_moves[] = $possible_move;
+      }
     }
     return $possible_moves;
   }
@@ -144,7 +138,12 @@ class Pawn extends Piece
 
 class Rook extends Piece
 {
-
+  public function get_possible_moves($board, $player)
+  {
+    $possible_moves = $this->get_straight_lines($this->position, $board);
+    echo("Available moves for piece: " . $this->array_to_english($possible_moves) . "\n");
+    return $possible_moves;
+  }
 }
 
 class Knight extends Piece
@@ -178,7 +177,16 @@ class Bishop extends Piece
 
 class Queen extends Piece
 {
-
+  public function get_possible_moves($board, $player)
+  {
+    $possible_moves = $this->get_diagonal_lines($this->position, $board);
+    foreach($this->get_straight_lines($this->position, $board) as $possible_move)
+    {
+      $possible_moves[] = $possible_move;
+    }
+    echo("Available moves for piece: " . $this->array_to_english($possible_moves) . "\n");
+    return $possible_moves;
+  }
 }
 
 class King extends Piece
