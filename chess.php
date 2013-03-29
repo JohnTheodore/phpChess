@@ -10,12 +10,12 @@
 class Game
 {
 
-  var $turn;
-  var $board;
-  var $initial_positions;
-  var $captured_pieces;
-  var $white;
-  var $black;
+  public $turn;
+  public $board;
+  public $initial_positions;
+  public $captured_pieces;
+  public $white;
+  public $black;
 
   public function __construct()
   {
@@ -30,9 +30,9 @@ class Game
     $checkmate = FALSE;
     while (!$checkmate)
     {
-      // add a line to check for check/checkmate... this method is going to be difficult.
-      // I need to write a method for each piece, so I can know that pieces available moves
-      // also have a separate method for is_check
+      // add a line to check for check/checkmate... this method is going to 
+      // be difficult. I need to write a method for each piece, so I can know 
+      // that pieces available moves also have a separate method for is_check
       $current_player = (($this->turn % 2 == 0) ? $this->white : $this->black);
       $this->board->cli_display();
       $current_move = $this->get_valid_move($current_player);
@@ -55,15 +55,16 @@ class Game
 
   public function is_valid_move($src_and_dest, $player)
   { // I changed idioms to have it look cleaner since this method is so big.
-    if (($this->board->is_on_board($src_and_dest[0])) && ($this->board->is_on_board($src_and_dest[1])))
+    if (($this->board->is_on_board($src_and_dest[0])) && 
+        ($this->board->is_on_board($src_and_dest[1])))
     {
-    $src = $src_and_dest[0];
-    $dest = $src_and_dest[1];
-    $src_piece = $this->board->get($src);
-    $dest_piece = $this->board->get($dest);
+      $src = $src_and_dest[0];
+      $dest = $src_and_dest[1];
+      $src_piece = $this->board->get($src);
+      $dest_piece = $this->board->get($dest);
     }
     else
-     { return FALSE; } // need valid src and dest positions
+      return FALSE; // need valid src and dest positions
 
     if ($src_piece->color != $player->color)
       { echo "wrong color\n"; return FALSE; } // Only move your own piece.
@@ -106,21 +107,34 @@ class Game
 
   public function unmake_move()
   {
-    // If the move causes the acting player to be in check, it should unmake the move before it displays the board.
+    // If the move causes the acting player to be in check, it should 
+    // unmake the move before it displays the board.
   }
 
   public function set_initial_positions()
   {
     $this->initial_positions = array(
-    "King"    => array("White" => array(array(7, 4)), "Black" => array(array(0, 4)) ),
-    "Queen"   => array("White" => array(array(7, 3)), "Black" => array(array(0, 3)) ),
-    "Bishop"  => array("White" => array(array(7, 2), array(7, 5)), "Black" => array(array(0, 2), array(0, 5)) ),
-    "Knight"  => array("White" => array(array(7, 1), array(7, 6)), "Black" => array(array(0, 1), array(0, 6)) ),
-    "Rook"    => array("White" => array(array(7, 0), array(7, 7)), "Black" => array(array(0, 0), array(0, 7)) ),
-    "Pawn"    => array("White" => array(array(6, 0), array(6, 1), array(6, 2), array(6, 3), 
-                         array(6, 4), array(6, 5), array(6, 6), array(6, 7) ),
-                       "Black" => array(array(1, 0), array(1, 1), array(1, 2), array(1, 3), 
-                         array(1, 4), array(1, 5), array(1, 6), array(1, 7) ))
+    "King"    => array("White" => array(array(7, 4)), 
+                       "Black" => array(array(0, 4)) ),
+    "Queen"   => array("White" => array(array(7, 3)), 
+                       "Black" => array(array(0, 3)) ),
+    "Bishop"  => array("White" => array(array(7, 2), array(7, 5)), 
+                       "Black" => array(array(0, 2), array(0, 5)) ),
+    "Knight"  => array("White" => array(array(7, 1), array(7, 6)), 
+                       "Black" => array(array(0, 1), array(0, 6)) ),
+    "Rook"    => array("White" => array(array(7, 0), array(7, 7)), 
+                       "Black" => array(array(0, 0), array(0, 7)) ),
+    "Pawn"    => array("White" => array(
+                                    array(6, 0), array(6, 1), array(6, 2), 
+                                    array(6, 3), array(6, 4), array(6, 5), 
+                                    array(6, 6), array(6, 7) 
+                                  ),
+                       "Black" => array(
+                                    array(1, 0), array(1, 1), array(1, 2), 
+                                    array(1, 3), array(1, 4), array(1, 5), 
+                                    array(1, 6), array(1, 7)
+                                  )
+                 )
     );
   }
 
@@ -151,9 +165,11 @@ class Game
     $options = array_merge($default_opts, $options);
     if ($options['load_game'])
     {
-      // do some crap here where you unserialize the game object from a previous game.
+      // do some crap here where you unserialize 
+      // the game object from a previous game.
     }
-    // later on there should be an option where the computer can play the computer (hehe).
+    // later on there should be an option where the 
+    // computer can play the computer (hehe).
     else
     {
       $this->board = new Board;
@@ -187,7 +203,8 @@ class Game
     $capturer = ($piece->color == "White") ? $this->black : $this->white;
     $capturee = $this->other_player($capturer);
     $piece_class = get_class($piece);
-    echo("\n\n{$capturer->name} captured {$capturee->name}'s {$capturee->color} {$piece_class}!!! \n\n");
+    echo("\n\n{$capturer->name} captured {$capturee->name}'s 
+              {$capturee->color} {$piece_class}!!! \n\n");
   }
 
 

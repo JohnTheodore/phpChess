@@ -1,11 +1,17 @@
 <?php
 class Piece
 {
-  var $position;
-  var $color;
-  var $moves;
-  var $straight_deltas = array( array(-1, 0), array(1, 0), array(0, -1), array(0, 1) );
-  var $diagonal_deltas = array( array(1, 1), array(1, -1), array(-1, 1), array(-1, -1) );
+  public $position;
+  public $color;
+  public $moves;
+  public $straight_deltas = array( 
+                                    array(-1, 0), array(1, 0), 
+                                    array(0, -1), array(0, 1) 
+                            );
+  public $diagonal_deltas = array( 
+                                    array(1, 1), array(1, -1), 
+                                    array(-1, 1), array(-1, -1)
+                            );
 
   public function __construct($position, $color)
   {
@@ -31,7 +37,9 @@ class Piece
     $no_friendly_fire = $positions;
     foreach($no_friendly_fire as $key => $position)
     {
-      if ( (is_object($board->get($position))) && ($board->get($position)->color === $player->color) )
+      if ( (is_object($board->get($position))) && 
+           ($board->get($position)->color === $player->color)
+         )
       {
         unset($no_friendly_fire[$key]);
       }
@@ -56,13 +64,20 @@ class Piece
     $possible_moves = array();
     $current_square = array( ($delta[0] + $src[0]), ($delta[1] + $src[1]) );
     $src_piece = $board->get($src);
-    while ( ($board->is_on_board($current_square)) && ( ($board->get($current_square) == NULL) || 
-      (is_object($board->get($current_square))) && ($src_piece->color != $board->get($current_square)->color) ) )
+    while ( ($board->is_on_board($current_square)) && 
+            ( ($board->get($current_square) == NULL) || 
+              (is_object($board->get($current_square))
+            ) && 
+            ($src_piece->color != $board->get($current_square)->color) ) )
     {
       $possible_moves[] = $current_square;
-      if ((is_object($board->get($current_square))) && ($src_piece->color != $board->get($current_square)->color))
+      if ( (is_object($board->get($current_square))) && 
+           ($src_piece->color != $board->get($current_square)->color)
+         )
         { break; }
-      $current_square = array( ($current_square[0] + $delta[0]), ($current_square[1] + $delta[1]) ); 
+      $current_square = array( ($current_square[0] + $delta[0]), 
+                               ($current_square[1] + $delta[1]) 
+                        );
     }
     return $possible_moves;
   }
@@ -92,15 +107,20 @@ class Pawn extends Piece
     {
       $possible_moves = array();
       if ($board->get(array(($x - 1), $y)) == NULL)
-        { $possible_moves[] = array( ($x - 1), $y); } // allowed to go one forward if the space is empty.
-      if (($moves == 0) && ($board->get(array(($x - 1), $y)) == NULL) && ($board->get(array(($x - 2), $y)) == NULL))
-        { $possible_moves[] = array( ($x - 2), $y); } // allowed to go two forward if both spaces open
+        // allowed to go one forward if the space is empty.
+        $possible_moves[] = array( ($x - 1), $y);
+      if (($moves == 0) && ($board->get(array(($x - 1), $y)) == NULL) && 
+          ($board->get(array(($x - 2), $y)) == NULL))
+        // allowed to go two forward if both spaces open
+        $possible_moves[] = array( ($x - 2), $y);
       if ( is_object($board->get(array(($x - 1), $y - 1))) && 
       ($board->get(($x - 1), $y - 1)->color != $this->color))
-        { $possible_moves[] = array(($x - 1), $y - 1); }  // allowed to attack diagonally
+        // allowed to attack diagonally
+        $possible_moves[] = array(($x - 1), $y - 1);
       if ( is_object($board->get(array(($x - 1), $y + 1))) && 
       ($board->get(array(($x - 1), $y + 1))->color != $this->color) )
-        { $possible_moves[] = array(($x - 1), $y + 1); }  //  allowed to attack diagonally
+        //  allowed to attack diagonally
+        $possible_moves[] = array(($x - 1), $y + 1);
       echo("Available moves for piece: " . $this->array_to_english($possible_moves) . "\n");
       return $possible_moves;
     }
@@ -108,15 +128,20 @@ class Pawn extends Piece
     {
       $possible_moves = array();
       if ($board->get(array(($x + 1), $y)) == NULL)
-        { $possible_moves[] = array( ($x + 1), $y); } // allowed to go one forward if the space is empty.
-      if (($moves == 0) && ($board->get(array(($x + 1), $y)) == NULL) && ($board->get(array(($x + 2), $y)) == NULL))
-        { $possible_moves[] = array( ($x + 2), $y); } // allowed to go two forward if both spaces open
+        // allowed to go one forward if the space is empty.
+        $possible_moves[] = array( ($x + 1), $y);
+      if (($moves == 0) && ($board->get(array(($x + 1), $y)) == NULL) && 
+          ($board->get(array(($x + 2), $y)) == NULL))
+        // allowed to go two forward if both spaces open
+        $possible_moves[] = array( ($x + 2), $y);
       if ( is_object($board->get(array(($x + 1), $y - 1))) && 
       ($board->get(($x + 1), $y - 1)->color != $this->color))
-        { $possible_moves[] = array(($x + 1), $y - 1); }  // allowed to attack diagonally
+        // allowed to attack diagonally
+        $possible_moves[] = array(($x + 1), $y - 1); 
       if ( is_object($board->get(array(($x + 1), $y + 1))) && 
       ($board->get(array(($x + 1), $y + 1))->color != $this->color) )
-        { $possible_moves[] = array(($x + 1), $y + 1); }  //  allowed to attack diagonally
+        //  allowed to attack diagonally
+        $possible_moves[] = array(($x + 1), $y + 1); 
       echo("Available moves for piece: " . $this->array_to_english($possible_moves) . "\n");
       return $possible_moves;
     }
@@ -127,7 +152,8 @@ class Rook extends Piece
 {
   public function get_possible_moves($board, $player)
   {
-    $possible_moves = $this->get_delta_lines($this->straight_deltas, $this->position, $board);
+    $deltas = $this->straight_deltas;
+    $possible_moves = $this->get_delta_lines($deltas, $this->position, $board);
     echo("Available moves for piece: " . $this->array_to_english($possible_moves) . "\n");
     return $possible_moves;
   }

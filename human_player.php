@@ -4,8 +4,8 @@
 class HumanPlayer
 {
 
-  var $color;
-  var $name; // this can be their username on the website later.
+  public $color;
+  public $name; // this can be their username on the website later.
 
   public function __construct($color, $name)
   {
@@ -18,7 +18,7 @@ class HumanPlayer
     $string_split = explode(", ", $string);
     $from = array( (8 - intval(substr($string_split[0], 1, 1))),
             (ord(substr($string_split[0], 0, 1)) - 97) );
-    $to = array( (8 - intval(substr($string_split[1], 1, 1))),
+    $to =   array( (8 - intval(substr($string_split[1], 1, 1))),
             (ord(substr($string_split[1], 0, 1)) - 97) );
     return array($from, $to);
   }
@@ -26,8 +26,8 @@ class HumanPlayer
   public function get_move()
   {
     fwrite(STDOUT, "Where would you like to move? (eg, 'a2, a4')\n");
-    $varin = trim(fgets(STDIN)); // this should be a while loop
-    return $this->convert_move($varin);               // keep asking until it is valid
+    $varin = trim(fgets(STDIN));        // this should be a while loop
+    return $this->convert_move($varin); // keep asking until it is valid
   }
 
 }

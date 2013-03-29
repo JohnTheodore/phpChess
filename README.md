@@ -8,6 +8,9 @@ php chess.php; // to run the game
 * check
 * checkmate
 * filter user input more so they can throw in garbage
+* unmake move on check?
+* load game functionality
+
 ** I should run these tools on my code:
 PHP_CodeSniffer (phpcs)
 Linter (php -l)
