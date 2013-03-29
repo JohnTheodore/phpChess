@@ -18,9 +18,9 @@ class Board {
     }
   }
 
-  public function unichr($u) 
+  public function unichr($unicode) 
   {
-    return mb_convert_encoding('&#' . intval($u) . ';', 'UTF-8', 'HTML-ENTITIES');
+    return mb_convert_encoding('&#' . intval($unicode) . ';', 'UTF-8', 'HTML-ENTITIES');
   }
 
   public function set_visuals()

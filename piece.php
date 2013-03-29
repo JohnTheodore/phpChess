@@ -100,51 +100,28 @@ class Pawn extends Piece
 {
   public function get_possible_moves($board, $player)
   {
-    $x = $this->position[0];
-    $y = $this->position[1];
+    $row = $this->position[0];
+    $col = $this->position[1];
     $moves = $this->moves;
-    if ($this->color == "White")
-    {
-      $possible_moves = array();
-      if ($board->get(array(($x - 1), $y)) == NULL)
-        // allowed to go one forward if the space is empty.
-        $possible_moves[] = array( ($x - 1), $y);
-      if (($moves == 0) && ($board->get(array(($x - 1), $y)) == NULL) && 
-          ($board->get(array(($x - 2), $y)) == NULL))
-        // allowed to go two forward if both spaces open
-        $possible_moves[] = array( ($x - 2), $y);
-      if ( is_object($board->get(array(($x - 1), $y - 1))) && 
-      ($board->get(($x - 1), $y - 1)->color != $this->color))
-        // allowed to attack diagonally
-        $possible_moves[] = array(($x - 1), $y - 1);
-      if ( is_object($board->get(array(($x - 1), $y + 1))) && 
-      ($board->get(array(($x - 1), $y + 1))->color != $this->color) )
-        //  allowed to attack diagonally
-        $possible_moves[] = array(($x - 1), $y + 1);
-      echo("Available moves for piece: " . $this->array_to_english($possible_moves) . "\n");
-      return $possible_moves;
-    }
-    elseif ($this->color == "Black")
-    {
-      $possible_moves = array();
-      if ($board->get(array(($x + 1), $y)) == NULL)
-        // allowed to go one forward if the space is empty.
-        $possible_moves[] = array( ($x + 1), $y);
-      if (($moves == 0) && ($board->get(array(($x + 1), $y)) == NULL) && 
-          ($board->get(array(($x + 2), $y)) == NULL))
-        // allowed to go two forward if both spaces open
-        $possible_moves[] = array( ($x + 2), $y);
-      if ( is_object($board->get(array(($x + 1), $y - 1))) && 
-      ($board->get(($x + 1), $y - 1)->color != $this->color))
-        // allowed to attack diagonally
-        $possible_moves[] = array(($x + 1), $y - 1); 
-      if ( is_object($board->get(array(($x + 1), $y + 1))) && 
-      ($board->get(array(($x + 1), $y + 1))->color != $this->color) )
-        //  allowed to attack diagonally
-        $possible_moves[] = array(($x + 1), $y + 1); 
-      echo("Available moves for piece: " . $this->array_to_english($possible_moves) . "\n");
-      return $possible_moves;
-    }
+    $direction = (($this->color == "White") ? -1 : 1);
+    $possible_moves = array();
+    if ($board->get(array(($row + $direction), $col)) == NULL)
+      // allowed to go one forward if the space is empty.
+      $possible_moves[] = array( ($row + $direction), $col);
+    if (($moves == 0) && ($board->get(array(($row + $direction), $col)) == NULL) && 
+        ($board->get(array(($row + $direction*2), $col)) == NULL))
+      // allowed to go two forward if both spaces open
+      $possible_moves[] = array( ($row + $direction*2), $col);
+    if ( is_object($board->get(array(($row + $direction), $col - 1))) && 
+    ($board->get(($row + $direction), $col - 1)->color != $this->color))
+      // allowed to attack diagonally
+      $possible_moves[] = array(($row + $direction), $col - 1); 
+    if ( is_object($board->get(array(($row + $direction), $col + 1))) && 
+    ($board->get(array(($direction + 1), $col + 1))->color != $this->color) )
+      //  allowed to attack diagonally
+      $possible_moves[] = array(($row + $direction), $col + 1); 
+    echo("Available moves for piece: " . $this->array_to_english($possible_moves) . "\n");
+    return $possible_moves;
   }
 }
 
@@ -163,13 +140,13 @@ class Knight extends Piece
 {
   public function get_possible_moves($board, $player)
   {
-    $x = $this->position[0];
-    $y = $this->position[1];
+    $row = $this->position[0];
+    $col = $this->position[1];
     $impossible_moves = array(
-      array( ($x + 2), ($y + 1) ), array( ($x + 2), ($y - 1) ),
-      array( ($x - 2), ($y + 1) ), array( ($x - 2), ($y - 1) ),
-      array( ($x + 1), ($y + 2) ), array( ($x + 1), ($y - 2) ),
-      array( ($x - 1), ($y + 2) ), array( ($x - 1), ($y - 2) )
+      array( ($row + 2), ($col + 1) ), array( ($row + 2), ($col - 1) ),
+      array( ($row - 2), ($col + 1) ), array( ($row - 2), ($col - 1) ),
+      array( ($row + 1), ($col + 2) ), array( ($row + 1), ($col - 2) ),
+      array( ($row - 1), ($col + 2) ), array( ($row - 1), ($col - 2) )
     );
     $onboard_moves = $this->filter_on_board_possibles($impossible_moves, $board);
     $possible_moves = $this->filter_no_friendly_fire($onboard_moves, $board, $player);
@@ -203,11 +180,11 @@ class King extends Piece
 {
   public function get_possible_moves($board, $player)
   {
-    $x = $this->position[0];
-    $y = $this->position[1];
+    $row = $this->position[0];
+    $col = $this->position[1];
     $impossible_moves = array( 
-      array($x - 1, $y + 1), array($x, $y + 1), array($x + 1, $y + 1), array($x - 1, $y - 1),
-      array($x, $y - 1), array($x + 1, $y - 1), array($x - 1, $y), array($x + 1, $y) 
+      array($row - 1, $col + 1), array($row, $col + 1), array($row + 1, $col + 1), array($row - 1, $col - 1),
+      array($row, $col - 1), array($row + 1, $col - 1), array($row - 1, $col), array($row + 1, $col) 
     );
     $onboard_moves = parent::filter_on_board_possibles($impossible_moves, $board);
     $possible_moves = parent::filter_no_friendly_fire($onboard_moves, $board, $player);
