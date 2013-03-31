@@ -1,96 +1,49 @@
 <?php
-class Board {
 
-  var $board;
-  var $cli_bw_visuals;
+  /* This board class is instantiated inside Chess->board */
+
+class Board
+{
+
+  public $board;
 
   public function __construct()
   {
-    $this->make_board();
-    $this->set_visuals();
+    $this->MakeBoard();
   }
 
-  public function make_board()
+  public function MakeBoard()
   {
     $this->board = array();
     for ($i = 0; $i < 8; $i++) {
-      array_push($this->board, array_fill(0, 8, NULL));
+      array_push($this->board, array_fill(0, 8, null));
     }
   }
 
-  public function unichr($unicode) 
+  public function Populate($pieces)
   {
-    return mb_convert_encoding('&#' . intval($unicode) . ';', 'UTF-8', 'HTML-ENTITIES');
-  }
-
-  public function set_visuals()
-  {
-    $this->cli_bw_visuals = array(
-      'King'    => array("9812", "9818"),
-      'Queen'   => array("9813", "9819"), // 0 == black, 1 == white
-      'Knight'  => array("9816", "9822"),
-      'Bishop'  => array("9815", "9821"),
-      'Rook'    => array("9814", "9820"),
-      'Pawn'    => array("9817", "9823")
-    );
-  }
-
-  public function cli_display()
-  {
-    echo "  a b c d e f g h\n";
-    echo "  ________________ \n";
-    foreach($this->board as $row_key => $row)
-    {
-      $row_num = (8 - $row_key);
-      echo "{$row_num}|";
-      foreach($row as $col_key => $col)
-      {
-        if ($col != NULL)
-        {
-          $piece_class = get_class($col);
-          $piece_color = (($col->color == "White") ? 1 : 0);
-          $piece_unicode = $this->cli_bw_visuals[$piece_class][$piece_color];
-          echo($this->unichr($piece_unicode) . " ");
-        }
-        elseif (($col == NULL) && ((($col_key + $row_key) % 2 == 0)))
-        {
-          echo($this->unichr("9632") . " "); // print black square
-        }
-        else
-        {
-          echo($this->unichr("9633") . " "); // print white square
-        }
-      }
-      echo("|{$row_num}\n"); 
-    }
-    echo("  ________________ \n");
-    echo("  a b c d e f g h\n\n");
-  }
-
-  public function populate($pieces)
-  {
-    foreach($pieces as $piece)
-    {
+    foreach($pieces as $piece) {
       $this->board[$piece->position[0]][$piece->position[1]] = $piece;
     }
   }
 
-  public function is_on_board($position)
+  public function IsOnBoard($position)
   {
     return (preg_match('/^[0-7]+$/', $position[0]) &&
     preg_match('/^[0-7]+$/', $position[1]));
   }
 
-  public function get($position)
+  public function Get($position)
   {
-    if ($this->is_on_board($position))
-      { return $this->board[$position[0]][$position[1]]; }
+    if ($this->IsOnBoard($position)) { 
+      return $this->board[$position[0]][$position[1]]; 
+    }
   }
 
-  public function move($src, $dest)
+  public function Move($src, $dest)
   {
     $mobile_piece = ($this->board[$src[0]][$src[1]]);
-    $this->board[$src[0]][$src[1]] = NULL;
+    $this->board[$src[0]][$src[1]] = null;
     $this->board[$dest[0]][$dest[1]] = $mobile_piece;
   }
 }

@@ -1,119 +1,132 @@
 <?php
+
+  /** This is the main class for Chess **/
   require 'board.php';
   require 'piece.php';
   require 'human_player.php';
   require 'computer_player.php';
-
-  // for debugging
-  require './kint/Kint.class.php';
+  require 'cli_display.php';
 
 class Game
 {
 
   public $turn;
   public $board;
-  public $initial_positions;
   public $captured_pieces;
   public $white;
   public $black;
+  public $interface;
 
-  public function __construct()
+  public function __construct() 
   {
+    /* refactor? */
     $this->board = new Board;
-    $this->set_initial_positions();
+    $this->setInitialPositions();
     $this->turn = 0;
     $this->captured_pieces = array();
   }
 
+  /** main play loop **/
   public function play()
   {
-    $checkmate = FALSE;
-    while (!$checkmate)
-    {
+    $checkmate = false;
+    while (!$checkmate) {
       // add a line to check for check/checkmate... this method is going to 
       // be difficult. I need to write a method for each piece, so I can know 
-      // that pieces available moves also have a separate method for is_check
+      // that pieces available moves also have a separate method for isCheck
       $current_player = (($this->turn % 2 == 0) ? $this->white : $this->black);
-      $this->board->cli_display();
-      $current_move = $this->get_valid_move($current_player);
+      $this->interface->displayBoard($this->board->board);
+      $current_move = $this->getValidMove($current_player);
       $this->turn++;
-      $this->make_move($current_move);
+      $this->makeMove($current_move);
     }
   }
 
-  public function get_valid_move($player)
+  /** continually ask for a move until a valid one is given **/
+  public function getValidMove($player)
   {
-    while (TRUE)
-    {
-      $this->prompt_move($player);
-      $src_and_dest = $player->get_move();
-      if ($this->is_valid_move($src_and_dest, $player))
-        { break; }
+    while (true) {
+      $this->interface->promptMove($player);
+      $src_and_dest = $player->GetMove();
+      if ($this->isValidMove($src_and_dest, $player)) { 
+        break; 
+      }
     }
     return $src_and_dest;
   }
 
-  public function is_valid_move($src_and_dest, $player)
-  { // I changed idioms to have it look cleaner since this method is so big.
-    if (($this->board->is_on_board($src_and_dest[0])) && 
-        ($this->board->is_on_board($src_and_dest[1])))
+  /** returns a boolean,  **/
+  public function isValidMove($src_and_dest, $player)
+  { 
+    if ( ($this->board->IsOnBoard($src_and_dest[0])) && 
+         ($this->board->IsOnBoard($src_and_dest[1]))
+       )
     {
       $src = $src_and_dest[0];
       $dest = $src_and_dest[1];
-      $src_piece = $this->board->get($src);
-      $dest_piece = $this->board->get($dest);
+      $src_piece = $this->board->Get($src);
+      $dest_piece = $this->board->Get($dest);
+    } else {
+      return false; // need valid src and dest positions
     }
-    else
-      return FALSE; // need valid src and dest positions
 
-    if ($src_piece->color != $player->color)
-      { echo "wrong color\n"; return FALSE; } // Only move your own piece.
-    elseif ($src == $dest)
-      { echo "different pls\n"; return FALSE; } // src and dest should be different
-    elseif ($src_piece == NULL)
-      { echo "no piece\n"; return FALSE; } // There is no piece at that src
-    elseif (($dest_piece != NULL) && ($src_piece->color == $dest_piece->color))
-      { echo "no friendly fire\n"; return FALSE; } // no friendly fire
-    //elseif (get_class($src_piece) == "Pawn")
-    //  { return FALSE; } // fulfill some annoying corner case logic for pawns 
-    elseif ( $this->is_possible_move($src_piece, $dest, $player) )
-      { return TRUE; } // allow the move only if the piece get_possible_moves
-                       // contains the dest position
-    else
-      { return FALSE; }
+    if ($src_piece->color != $player->color) { 
+      echo "wrong color\n"; return false; 
+    } elseif ($src == $dest) {
+      // Only move your own piece. 
+      echo "different pls\n"; return false; 
+    } elseif ($src_piece == null) { 
+      // src and dest should be different
+      echo "no piece\n"; return false; 
+    } elseif (($dest_piece != null) && ($src_piece->color == $dest_piece->color)) {
+      // There is no piece at that src 
+      echo "no friendly fire\n"; return false; 
+    } elseif ( $this->isPossibleMove($src_piece, $dest) ) { 
+      // no friendly fire
+      return true; 
+    } else { // allow the move only if the piece getPossibleMoves
+      // contains the dest position
+      return false;
+    }
   }
 
-  public function is_possible_move($src_piece, $dest, $player)
+  /** helper method to make isValidMove smaller, user input needs to match
+      what positions that piece object returns in getPossibleMoves **/
+  public function isPossibleMove($src_piece, $dest)
   {
-    $possible_moves = $src_piece->get_possible_moves($this->board, $player);
-    return array_search($dest, $possible_moves) !== FALSE;
+    $possible_moves = $src_piece->getPossibleMoves($this->board);
+    return array_search($dest, $possible_moves) !== false;
   }
 
-  public function make_move($src_and_dest)
+  public function makeMove($src_and_dest)
   {
     $src = $src_and_dest[0];
     $dest = $src_and_dest[1];
-    $mobile_piece = $this->board->get($src);
+    $mobile_piece = $this->board->Get($src);
     $mobile_piece->position = $dest;
     $mobile_piece->moves++;
 
-    if ($this->board->get($dest) != NULL)
-    {
-      $this->captured_pieces[] = $this->board->get($dest);
-      $this->announce_capture($this->board->get($dest));
+    if ($this->board->Get($dest) != null) {
+      $this->captured_pieces[] = $this->board->Get($dest);
+      $this->interface->announceCapture($this->board->Get($dest));
     }
     $this->board->move($src, $dest);
   }
 
-  public function unmake_move()
+  public function unmakeMove()
   {
     // If the move causes the acting player to be in check, it should 
     // unmake the move before it displays the board.
   }
 
-  public function set_initial_positions()
+  /** This returns an array that contains all the initial positions for a
+      chess set, in the form of key as class Piece name and value as an
+      array with two keys which are color parameters for instatiating the 
+      object. Each of the color keys has further arrays that are the
+      position parameter for instatiating the piece object. **/
+  public function getInitialPositions()
   {
-    $this->initial_positions = array(
+    return array(
     "King"    => array("White" => array(array(7, 4)), 
                        "Black" => array(array(0, 4)) ),
     "Queen"   => array("White" => array(array(7, 3)), 
@@ -138,15 +151,14 @@ class Game
     );
   }
 
-  public function get_chess_set()
+  /** This returns a plain array with all 32 chess piece objects. It will be
+      fed to the populate method in the board class. **/
+  public function getChessSet()
   {
     $chess_set = array();
-    foreach($this->initial_positions as $chessman => $colors)
-    {
-      foreach($colors as $color => $positions)
-      {
-        foreach($positions as $position)
-        {
+    foreach($this->getInitialPositions() as $chessman => $colors) {
+      foreach($colors as $color => $positions) {
+        foreach($positions as $position) {
           array_push($chess_set, new $chessman($position, $color));
         }
       }
@@ -154,37 +166,37 @@ class Game
     return $chess_set;
   }
 
-  public function is_check($player)
-  {
+  public function isCheck()
+  { // $player param later on
     return false; // blah blah, put logic in here later.
   }
 
-  public function setup_game($options = array())
+  /** This will configure a new game with human v human, human v computer, 
+      computer v human. Saved games can be loaded from this method too **/
+  public function setupGame($options = array())
   {
-    $default_opts = array("load_game" => FALSE, "player_count" => 2);
+    $default_opts = array("load_game" => false, "player_count" => 2, 
+      "interface" => "CLI");
     $options = array_merge($default_opts, $options);
-    if ($options['load_game'])
-    {
+    if ($options['load_game']) {
       // do some crap here where you unserialize 
       // the game object from a previous game.
-    }
-    // later on there should be an option where the 
-    // computer can play the computer (hehe).
-    else
-    {
+    } else {
+      $this->interface = new CliDisplay;
       $this->board = new Board;
-      $this->board->populate($this->get_chess_set());
-      $this->instantiate_players();
+      $this->board->Populate($this->getChessSet());
+      $this->setPlayers();
     }
   }
 
-  public function other_player($player)
+  /** pass in a player object and the other player object will return **/
+  public function otherPlayer($player)
   {
     return ( ($player->color == "White") ? $this->black : $this->white );
   }
 
-  public function instantiate_players($player_count = 2)
-  {
+  public function setPlayers()
+  {           // $player_count = 2 as params later on?
     // Later on put some crap in here where they can choose to have...
     // computer v computer, human v human, human v computer.
     // use php switch() method
@@ -192,28 +204,13 @@ class Game
     $this->black = new HumanPlayer("Black", "Theodore");
   }
 
- // ### INTERFACE METHODS BELOW ### //
-  public function prompt_move($player)
-  {
-    echo("{$player->name}'s move ({$player->color}): ");
-  }
-
-  public function announce_capture($piece)
-  {
-    $capturer = ($piece->color == "White") ? $this->black : $this->white;
-    $capturee = $this->other_player($capturer);
-    $piece_class = get_class($piece);
-    echo("\n\n{$capturer->name} captured {$capturee->name}'s 
-              {$capturee->color} {$piece_class}!!! \n\n");
-  }
-
-
 }
 
+/** bootstrapping the game **/
 function load()
 {
   $game = new Game;
-  $game->setup_game();
+  $game->setupGame();
   $game->play();
 }
 

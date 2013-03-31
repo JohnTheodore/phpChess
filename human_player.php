@@ -1,6 +1,6 @@
 <?php
 
-// this class should be really simple, just take input and validate it.
+/* this class should be really simple, just take input and validate it. */
 class HumanPlayer
 {
 
@@ -13,21 +13,21 @@ class HumanPlayer
     $this->name = $name;
   }
 
-  public function convert_move($string)
+  public function EngToArray($string)
   {
     $string_split = explode(", ", $string);
-    $from = array( (8 - intval(substr($string_split[0], 1, 1))),
+    $src = array( (8 - intval(substr($string_split[0], 1, 1))),
             (ord(substr($string_split[0], 0, 1)) - 97) );
-    $to =   array( (8 - intval(substr($string_split[1], 1, 1))),
+    $dest =   array( (8 - intval(substr($string_split[1], 1, 1))),
             (ord(substr($string_split[1], 0, 1)) - 97) );
-    return array($from, $to);
+    return array($src, $dest);
   }
 
-  public function get_move()
+  public function GetMove()
   {
     fwrite(STDOUT, "Where would you like to move? (eg, 'a2, a4')\n");
     $varin = trim(fgets(STDIN));        // this should be a while loop
-    return $this->convert_move($varin); // keep asking until it is valid
+    return $this->EngToArray($varin); // keep asking until it is valid
   }
 
 }
