@@ -56,10 +56,10 @@ class CliDisplay {
   {
     echo "  a b c d e f g h\n";
     echo "  ________________ \n";
-    foreach($board as $row_key => $row) {
+    foreach ($board as $row_key => $row) {
       $row_num = (8 - $row_key);
       echo "{$row_num}|";
-      foreach($row as $col_key => $col) {
+      foreach ($row as $col_key => $col) {
         if ($col != null) {
           $piece_class = get_class($col);
           $piece_color = (($col->color == "White") ? 1 : 0);

@@ -21,7 +21,7 @@ class Piece
   public function filterOnBoardPossibles($impossible_positions, $board)
   {
     $onboard_moves = $impossible_positions;
-    foreach($onboard_moves as $key => $position) {
+    foreach ($onboard_moves as $key => $position) {
       if (!$board->IsOnBoard($position)) {
         unset($onboard_moves[$key]);
       }
@@ -32,7 +32,7 @@ class Piece
   public function filterNoFriendlyFire($positions, $board, $color)
   {
     $no_friendly_fire = $positions;
-    foreach($no_friendly_fire as $key => $position) {
+    foreach ($no_friendly_fire as $key => $position) {
       if ( (is_object($board->Get($position))) && 
            ($board->Get($position)->color === $color)
          )
@@ -46,7 +46,7 @@ class Piece
   public function arrayToEnglish($positions_array)
   {
     $english_positions = "";
-    foreach($positions_array as $position) {
+    foreach ($positions_array as $position) {
       $row = (8 - $position[0]);
       $col = ( chr($position[1] + 97) );
       $english_positions .= "{$col}{$row}, ";
@@ -81,9 +81,9 @@ class Piece
   public function getDeltaLines($deltas, $src, $board)
   {
     $possible_moves = array();
-    foreach($deltas as $delta)
+    foreach ($deltas as $delta)
     {
-      foreach($this->crawlDelta($delta, $src, $board) as $possible_move )
+      foreach ($this->crawlDelta($delta, $src, $board) as $possible_move )
       {
         $possible_moves[] = $possible_move;
       }
@@ -110,7 +110,7 @@ class Pawn extends Piece
       // allowed to go two forward if both spaces open
       $possible_moves[] = array( ($row + $direction*2), $col);
     }
-    foreach(array(-1, 1) as $diagonal)
+    foreach (array(-1, 1) as $diagonal)
     {
       if ( is_object($board->Get(array(($row + $direction), $col + $diagonal))) && 
         ($board->Get(array(($row + $direction), $col + $diagonal))->color != $this->color)) {

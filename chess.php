@@ -101,7 +101,9 @@ class Game
     $possible_moves = $src_piece->getPossibleMoves($this->board);
     return array_search($dest, $possible_moves) !== false;
   }
-
+  /** moves the piece object from one position in the board array
+      to another position. If there is an enemy piece there it
+      will add it to the captured_pieces array when allowed  **/
   public function makeMove($src_and_dest)
   {
     $src = $src_and_dest[0];
@@ -178,9 +180,9 @@ class Game
   public function getChessSet()
   {
     $chess_set = array();
-    foreach($this->getInitialPositions() as $chessman => $colors) {
-      foreach($colors as $color => $positions) {
-        foreach($positions as $position) {
+    foreach ($this->getInitialPositions() as $chessman => $colors) {
+      foreach ($colors as $color => $positions) {
+        foreach ($positions as $position) {
           array_push($chess_set, new $chessman($position, $color));
         }
       }
@@ -209,7 +211,7 @@ class Game
     } else {
       $this->interface = new CliDisplay;
       $this->board = new Board;
-      $this->board->populate($this->getChessSet());
+      $this->board->populateBoard($this->getChessSet());
       $this->setPlayers();
     }
   }
