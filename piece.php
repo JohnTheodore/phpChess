@@ -54,7 +54,7 @@ class Piece
     return $english_positions;
   }
 
-  public function crawlDelta($src, $delta, $board)
+  public function crawlDelta($delta, $src, $board)
   {  // there is some code smell here
     $possible_moves = array();
     $current_square = array( ($delta[0] + $src[0]), ($delta[1] + $src[1]) );
@@ -83,7 +83,7 @@ class Piece
     $possible_moves = array();
     foreach($deltas as $delta)
     {
-      foreach($this->crawlDelta($src, $delta, $board) as $possible_move )
+      foreach($this->crawlDelta($delta, $src, $board) as $possible_move )
       {
         $possible_moves[] = $possible_move;
       }
@@ -105,7 +105,7 @@ class Pawn extends Piece
       // allowed to go one forward if the space is empty.
       $possible_moves[] = array( ($row + $direction), $col);
     }
-    if (($moves == 0) && ($board->Get(array(($row + $direction), $col)) == null) && 
+    if (($moves == 0) && ($board->get(array(($row + $direction), $col)) == null) && 
         ($board->Get(array(($row + $direction*2), $col)) == null)) {
       // allowed to go two forward if both spaces open
       $possible_moves[] = array( ($row + $direction*2), $col);

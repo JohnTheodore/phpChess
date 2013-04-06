@@ -51,7 +51,7 @@ class Game
   {
     while (true) {
       $this->interface->promptMove($player);
-      $src_and_dest = $player->GetMove();
+      $src_and_dest = $player->getMove();
       if ($this->isValidMove($src_and_dest, $player)) { 
         break; 
       }
@@ -68,8 +68,8 @@ class Game
     {
       $src = $src_and_dest[0];
       $dest = $src_and_dest[1];
-      $src_piece = $this->board->Get($src);
-      $dest_piece = $this->board->Get($dest);
+      $src_piece = $this->board->get($src);
+      $dest_piece = $this->board->get($dest);
     } else {
       return false; // need valid src and dest positions
     }
@@ -106,12 +106,12 @@ class Game
   {
     $src = $src_and_dest[0];
     $dest = $src_and_dest[1];
-    $mobile_piece = $this->board->Get($src);
+    $mobile_piece = $this->board->get($src);
     $mobile_piece->position = $dest;
     $mobile_piece->moves++;
 
-    if ($this->board->Get($dest) != null) {
-      $captured = $this->board->Get($dest);
+    if ($this->board->get($dest) != null) {
+      $captured = $this->board->get($dest);
       $this->captured_pieces[] = $captured;
       $this->interface->announceCapture(getColorsNames($captured));
     }
@@ -191,8 +191,8 @@ class Game
   public function isCheck($color)
   { 
     $king = $this->board->findKing($color);
-    $namescolors = $this->getColorsNames($king);
-    $allEnemyMoves = $this->board->getAllPossibleMoves($namescolors["capturer"]["color"]);
+    $colors = $this->getColorsNames($king);
+    $allEnemyMoves = $this->board->getAllPossibleMoves($colors["capturer"]["color"]);
     return array_search($king->position, $allEnemyMoves) !== false;
   }
 
@@ -209,7 +209,7 @@ class Game
     } else {
       $this->interface = new CliDisplay;
       $this->board = new Board;
-      $this->board->Populate($this->getChessSet());
+      $this->board->populate($this->getChessSet());
       $this->setPlayers();
     }
   }

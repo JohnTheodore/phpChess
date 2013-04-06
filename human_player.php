@@ -24,7 +24,7 @@ class HumanPlayer
     return array($src, $dest);
   }
 
-  public function GetMove()
+  public function getMove()
   {
     fwrite(STDOUT, "Where would you like to move? (eg, 'a2, a4')\n");
     $varin = trim(fgets(STDIN));        // this should be a while loop

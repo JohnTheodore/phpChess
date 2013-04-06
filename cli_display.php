@@ -34,7 +34,7 @@ class CliDisplay {
 
   }
 
-    public function UniChr($unicode) 
+    public function uniChr($unicode) 
   {
     return mb_convert_encoding('&#' . intval($unicode) . 
       ';', 'UTF-8', 'HTML-ENTITIES');

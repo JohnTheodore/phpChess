@@ -20,7 +20,7 @@ class Board
     }
   }
 
-  public function Populate($pieces)
+  public function populate($pieces)
   {
     foreach($pieces as $piece) {
       $this->board[$piece->position[0]][$piece->position[1]] = $piece;
@@ -33,14 +33,14 @@ class Board
     preg_match('/^[0-7]+$/', $position[1]));
   }
 
-  public function Get($position)
+  public function get($position)
   {
     if ($this->IsOnBoard($position)) { 
       return $this->board[$position[0]][$position[1]]; 
     }
   }
 
-  public function Move($src, $dest)
+  public function move($src, $dest)
   {
     $mobile_piece = ($this->board[$src[0]][$src[1]]);
     $this->board[$src[0]][$src[1]] = null;
@@ -50,13 +50,10 @@ class Board
   public function getAllPossibleMoves($color)
   {
     $allMoves = array();
-    foreach($this->board as $row)
-    {
-      foreach($row as $square)
-      {
-        if ( (is_object($square)) && ($square->color == $color) )
-        {
-          foreach($square->getPossibleMoves($this->board) as $move)
+    foreach($this->board as $row) {
+      foreach($row as $square) {
+        if ( (is_object($square)) && ($square->color == $color) ) {
+          foreach($square->getPossibleMoves($this) as $move)
           array_push($allMoves, $move);
         }
       }
@@ -66,10 +63,8 @@ class Board
 
   public function findKing($color)
   {
-    foreach ($this->board as $row)
-    {
-      foreach($row as $square)
-      {
+    foreach ($this->board as $row) {
+      foreach($row as $square) {
         if ((get_class($square) == "King") && ($square->color == $color)) {
           return $square;
         }
