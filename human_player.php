@@ -13,7 +13,8 @@ class HumanPlayer
     $this->name = $name;
   }
 
-  public function EngToArray($string)
+  /** This takes  **/
+  public function engToArray($string)
   {
     $string_split = explode(", ", $string);
     $src = array( (8 - intval(substr($string_split[0], 1, 1))),
@@ -27,7 +28,7 @@ class HumanPlayer
   {
     fwrite(STDOUT, "Where would you like to move? (eg, 'a2, a4')\n");
     $varin = trim(fgets(STDIN));        // this should be a while loop
-    return $this->EngToArray($varin); // keep asking until it is valid
+    return $this->engToArray($varin); // keep asking until it is valid
   }
 
 }

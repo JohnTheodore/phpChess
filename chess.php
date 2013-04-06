@@ -10,20 +10,21 @@
 class Game
 {
 
-  public $turn;
+  public $turn = 0;
   public $board;
   public $captured_pieces;
   public $white;
   public $black;
   public $interface;
+  public $moves_history;
 
   public function __construct() 
   {
     /* refactor? */
     $this->board = new Board;
-    $this->setInitialPositions();
     $this->turn = 0;
     $this->captured_pieces = array();
+    $this->moves_history = array();
   }
 
   /** main play loop **/
@@ -31,10 +32,13 @@ class Game
   {
     $checkmate = false;
     while (!$checkmate) {
-      // add a line to check for check/checkmate... this method is going to 
-      // be difficult. I need to write a method for each piece, so I can know 
-      // that pieces available moves also have a separate method for isCheck
       $current_player = (($this->turn % 2 == 0) ? $this->white : $this->black);
+      if ($this->isCheck($current_player->color)) {
+        $interface->announceCheck(getColorsNames(findKing($current_player->color)));
+      }
+
+      // add a line to check for check/checkmate... 
+
       $this->interface->displayBoard($this->board->board);
       $current_move = $this->getValidMove($current_player);
       $this->turn++;
@@ -58,8 +62,8 @@ class Game
   /** returns a boolean,  **/
   public function isValidMove($src_and_dest, $player)
   { 
-    if ( ($this->board->IsOnBoard($src_and_dest[0])) && 
-         ($this->board->IsOnBoard($src_and_dest[1]))
+    if ( ($this->board->isOnBoard($src_and_dest[0])) && 
+         ($this->board->isOnBoard($src_and_dest[1]))
        )
     {
       $src = $src_and_dest[0];
@@ -107,10 +111,28 @@ class Game
     $mobile_piece->moves++;
 
     if ($this->board->Get($dest) != null) {
-      $this->captured_pieces[] = $this->board->Get($dest);
-      $this->interface->announceCapture($this->board->Get($dest));
+      $captured = $this->board->Get($dest);
+      $this->captured_pieces[] = $captured;
+      $this->interface->announceCapture(getColorsNames($captured));
     }
     $this->board->move($src, $dest);
+  }
+
+  public function getColorsNames($piece)
+  {
+    $capturer = ($piece->color == "White") ? $this->black : $this->white;
+    $capturee = ($piece->color == "White") ? $this->white : $this->black;
+    return array(
+          "piece" => get_class($piece),
+          "capturer" => array( 
+                          "name" => $capturer->name,
+                          "color" => $capturer->color
+                        ),
+          "capturee" => array(
+                          "name" => $capturee->name,
+                          "color" => $capturee->color
+            )
+      );
   }
 
   public function unmakeMove()
@@ -166,9 +188,12 @@ class Game
     return $chess_set;
   }
 
-  public function isCheck()
-  { // $player param later on
-    return false; // blah blah, put logic in here later.
+  public function isCheck($color)
+  { 
+    $king = $this->board->findKing($color);
+    $namescolors = $this->getColorsNames($king);
+    $allEnemyMoves = $this->board->getAllPossibleMoves($namescolors["capturer"]["color"]);
+    return array_search($king->position, $allEnemyMoves) !== false;
   }
 
   /** This will configure a new game with human v human, human v computer, 
@@ -187,12 +212,6 @@ class Game
       $this->board->Populate($this->getChessSet());
       $this->setPlayers();
     }
-  }
-
-  /** pass in a player object and the other player object will return **/
-  public function otherPlayer($player)
-  {
-    return ( ($player->color == "White") ? $this->black : $this->white );
   }
 
   public function setPlayers()

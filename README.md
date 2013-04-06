@@ -10,9 +10,9 @@ php chess.php; // to run the game
 * filter user input more so they can throw in garbage
 * unmake move on check?
 * load game functionality
+* allow pawns to get promoted when they reach the end.
 
-** I should run these tools on my code:
 PHP_CodeSniffer (phpcs)
 Linter (php -l)
-PHP Mess Detector (phpmd)
-Scheck (scheck, part of Facebook’s pfff toolchain)
+I pass the tests for (PHP Mess Detector (phpmd))
+I pass the tests for (Scheck (scheck, part of Facebook’s pfff toolchain))

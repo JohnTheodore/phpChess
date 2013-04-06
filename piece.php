@@ -18,7 +18,7 @@ class Piece
     $this->color = $color;
   }
 
-  public function FilterOnBoardPossibles($impossible_positions, $board)
+  public function filterOnBoardPossibles($impossible_positions, $board)
   {
     $onboard_moves = $impossible_positions;
     foreach($onboard_moves as $key => $position) {
@@ -29,7 +29,7 @@ class Piece
     return $onboard_moves;
   }
 
-  public function FilterNoFriendlyFire($positions, $board, $color)
+  public function filterNoFriendlyFire($positions, $board, $color)
   {
     $no_friendly_fire = $positions;
     foreach($no_friendly_fire as $key => $position) {
@@ -43,7 +43,7 @@ class Piece
     return $no_friendly_fire;
   }
 
-  public function ArrayToEnglish($positions_array)
+  public function arrayToEnglish($positions_array)
   {
     $english_positions = "";
     foreach($positions_array as $position) {
@@ -54,7 +54,7 @@ class Piece
     return $english_positions;
   }
 
-  public function CrawlDelta($src, $delta, $board)
+  public function crawlDelta($src, $delta, $board)
   {  // there is some code smell here
     $possible_moves = array();
     $current_square = array( ($delta[0] + $src[0]), ($delta[1] + $src[1]) );
@@ -78,12 +78,12 @@ class Piece
     return $possible_moves;
   }
 
-  public function GetDeltaLines($deltas, $src, $board)
+  public function getDeltaLines($deltas, $src, $board)
   {
     $possible_moves = array();
     foreach($deltas as $delta)
     {
-      foreach($this->CrawlDelta($src, $delta, $board) as $possible_move )
+      foreach($this->crawlDelta($src, $delta, $board) as $possible_move )
       {
         $possible_moves[] = $possible_move;
       }
@@ -118,7 +118,7 @@ class Pawn extends Piece
         $possible_moves[] = array(($row + $direction), $col + $diagonal);
       }
     }  
-    echo("Available moves: " . $this->ArrayToEnglish($possible_moves) . "\n");
+    echo("Available moves: " . $this->arrayToEnglish($possible_moves) . "\n");
     return $possible_moves;
   }
 }
@@ -128,8 +128,8 @@ class Rook extends Piece
   public function getPossibleMoves($board)
   {
     $deltas = $this->straight_deltas;
-    $possible_moves = $this->GetDeltaLines($deltas, $this->position, $board);
-    echo("Available moves: " . $this->ArrayToEnglish($possible_moves) . "\n");
+    $possible_moves = $this->getDeltaLines($deltas, $this->position, $board);
+    echo("Available moves: " . $this->arrayToEnglish($possible_moves) . "\n");
     return $possible_moves;
   }
 }
@@ -147,9 +147,9 @@ class Knight extends Piece
       array( ($row + 1), ($col + 2) ), array( ($row + 1), ($col - 2) ),
       array( ($row - 1), ($col + 2) ), array( ($row - 1), ($col - 2) )
     );
-    $onboard_moves = $this->FilterOnBoardPossibles($all_moves, $board);
-    $possible_moves = $this->FilterNoFriendlyFire($onboard_moves, $board, $color);
-    echo("Available moves: " . $this->ArrayToEnglish($possible_moves) . "\n");
+    $onboard_moves = $this->filterOnBoardPossibles($all_moves, $board);
+    $possible_moves = $this->filterNoFriendlyFire($onboard_moves, $board, $color);
+    echo("Available moves: " . $this->arrayToEnglish($possible_moves) . "\n");
     return $possible_moves;
   }
 }
@@ -158,8 +158,8 @@ class Bishop extends Piece
 {
   public function getPossibleMoves($board)
   {
-    $possible_moves = $this->GetDeltaLines($this->diagonal_deltas, $this->position, $board);
-    echo("Available moves: " . $this->ArrayToEnglish($possible_moves) . "\n");
+    $possible_moves = $this->getDeltaLines($this->diagonal_deltas, $this->position, $board);
+    echo("Available moves: " . $this->arrayToEnglish($possible_moves) . "\n");
     return $possible_moves;
   }
 }
@@ -169,8 +169,8 @@ class Queen extends Piece
   public function getPossibleMoves($board)
   {
     $deltas = array_merge($this->diagonal_deltas, $this->straight_deltas);
-    $possible_moves = $this->GetDeltaLines($deltas, $this->position, $board);
-    echo("Available moves for piece: " . $this->ArrayToEnglish($possible_moves) . "\n");
+    $possible_moves = $this->getDeltaLines($deltas, $this->position, $board);
+    echo("Available moves for piece: " . $this->arrayToEnglish($possible_moves) . "\n");
     return $possible_moves;
   }
 }
@@ -186,9 +186,9 @@ class King extends Piece
       array($row - 1, $col + 1), array($row, $col + 1), array($row + 1, $col + 1), array($row - 1, $col - 1),
       array($row, $col - 1), array($row + 1, $col - 1), array($row - 1, $col), array($row + 1, $col) 
     );
-    $onboard_moves = $this->FilterOnBoardPossibles($all_moves, $board);
-    $possible_moves = $this->FilterNoFriendlyFire($onboard_moves, $board, $color);
-    echo("Available moves for piece: " . $this->ArrayToEnglish($possible_moves) . "\n");
+    $onboard_moves = $this->filterOnBoardPossibles($all_moves, $board);
+    $possible_moves = $this->filterNoFriendlyFire($onboard_moves, $board, $color);
+    echo("Available moves for piece: " . $this->arrayToEnglish($possible_moves) . "\n");
     return $onboard_moves;
   }
 }

@@ -6,7 +6,13 @@ class CliDisplay {
 
   public function __construct()
   {
-    $this->SetVisuals();
+    $this->setVisuals();
+  }
+
+    /** pass in a player object and the other player object will return **/
+  public function otherPlayer($player)
+  {
+    return ( ($player->color == "White") ? $this->black : $this->white );
   }
 
   public function promptMove($player)
@@ -23,13 +29,18 @@ class CliDisplay {
               {$capturee->color} {$piece_class}!!! \n\n");
   }
 
+  public function announceCheck($player)
+  {
+
+  }
+
     public function UniChr($unicode) 
   {
     return mb_convert_encoding('&#' . intval($unicode) . 
       ';', 'UTF-8', 'HTML-ENTITIES');
   }
 
-  public function SetVisuals()
+  public function setVisuals()
   {
     $this->cli_bw_visuals = array(
       'King'    => array("9812", "9818"),
