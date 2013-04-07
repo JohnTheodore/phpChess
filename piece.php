@@ -179,7 +179,7 @@ class Piece
 class Pawn extends Piece
 {
   /**
-  * desc
+  * This method is a little complicated and could be simplified.
   *
   * @param object $board which contains all the positions of all pieces.
   *
@@ -225,7 +225,7 @@ class Pawn extends Piece
 class Rook extends Piece
 {
   /**
-  * desc
+  * This uses straight_lines delta set, and throws it to getDeltas / crawlDelta
   *
   * @param object $board which contains all the positions of all pieces.
   *
@@ -251,7 +251,8 @@ class Rook extends Piece
 class Knight extends Piece
 {
   /**
-  * desc
+  * The $all_moves probably has moves that aren't possible. It gets culled
+  * by filterOnBoardPossibles() and filterNoFriendlyFire();
   *
   * @param object $board which contains all the positions of all pieces.
   *
@@ -286,7 +287,7 @@ class Knight extends Piece
 class Bishop extends Piece
 {
   /**
-  * desc
+  * This uses diagonal_lines delta set, and throws it to getDeltas / crawlDelta
   *
   * @param object $board which contains all the positions of all pieces.
   *
@@ -312,7 +313,9 @@ class Bishop extends Piece
 class Queen extends Piece
 {
   /**
-  * desc
+  * The queen takes the delta sets from the bishop and the rook, does an 
+  * array_merge() to combine them into one array, then throws it to 
+  * getDeltas and crawlDelta to get all the possible moves.
   *
   * @param object $board which contains all the positions of all pieces.
   *
@@ -339,7 +342,8 @@ class King extends Piece
 {
 
   /**
-  * desc
+  * The $all_moves could have moves that aren't possible. It gets culled
+  * by filterOnBoardPossibles() and filterNoFriendlyFire();
   *
   * @param object $board which contains all the positions of all pieces.
   *
