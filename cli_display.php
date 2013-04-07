@@ -41,7 +41,7 @@ class CliDisplay
   *
   * @return object that is the opposing $otherplayer of $player 
   **/
-  public function otherPlayer($player)
+  public function otherPlayer(HumanPlayer $player)
   {
     return ( ($player->color == "White") ? $this->black : $this->white );
   }
@@ -53,7 +53,7 @@ class CliDisplay
   *
   * @return string as an echo
   **/
-  public function promptMove($player)
+  public function promptMove(HumanPlayer $player)
   {
     echo("{$player->name}'s move ({$player->color}): ");
   }
@@ -65,7 +65,7 @@ class CliDisplay
   *
   * @return string as an echo
   **/
-  public function announceCapture($colorsnames)
+  public function announceCapture(array $colorsnames)
   {
     $capturer = $colorsnames["capturer"];
     $capturee = $colorsnames["capturee"];
@@ -81,9 +81,13 @@ class CliDisplay
   *
   * @return
   **/
-  public function announceCheck($player)
+  public function announceCheck(array $colorsnames)
   {
-
+    $capturer = $colorsnames["capturer"];
+    $capturee = $colorsnames["capturee"];
+    $piece    = $colorsnames["piece"];
+    echo("\n\n{$capturer["name"]} has put {$capturee["name"]}'s "
+         . "{$capturee["color"]} {$piece} into check!!! \n\n");
   }
 
   /**
@@ -123,11 +127,11 @@ class CliDisplay
   * This uses unicode characters to print nice chess piece characters
   * to the terminal screen in a clean format (clean for CLI)
   *
-  * @param object $board instance variable from Board class
+  * @param array $board from Board object/class
   *
   * @return string in the form of an echo to the terminal
   **/
-  public function displayBoard($board)
+  public function displayBoard(array $board)
   {
     echo "  a b c d e f g h\n";
     echo "  ________________ \n";

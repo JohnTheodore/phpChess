@@ -35,7 +35,7 @@ class Board
   /** 
   * for loop to make a 2d array
   * 
-  * @return said 2d 8x8 array
+  * @return said 2d 8x8 array with all default values as null
   **/
   public function getBoard()
   {
@@ -55,7 +55,7 @@ class Board
   *
   * @return void
   **/
-  public function populateBoard($pieces)
+  public function populateBoard(array $pieces)
   {
     foreach ($pieces as $piece) {
       $this->board[$piece->position[0]][$piece->position[1]] = $piece;
@@ -70,7 +70,7 @@ class Board
   *
   * @return boolean
   **/
-  public function isOnBoard($position)
+  public function isOnBoard(array $position)
   {
     return (preg_match('/^[0-7]+$/', $position[0]) &&
     preg_match('/^[0-7]+$/', $position[1]));
@@ -83,7 +83,7 @@ class Board
   *
   * @return object piece that was in the given $position
   **/
-  public function get($position)
+  public function get(array $position)
   {
     if ($this->IsOnBoard($position)) { 
       return $this->board[$position[0]][$position[1]]; 
@@ -98,7 +98,7 @@ class Board
   *
   * @return void
   **/
-  public function move($src, $dest)
+  public function move(array $src, array $dest)
   {
     $mobile_piece = ($this->board[$src[0]][$src[1]]);
     $this->board[$src[0]][$src[1]] = null;
@@ -129,7 +129,7 @@ class Board
   }
 
   /** 
-  * returns the King object for a give color 
+  * returns the King object for a given color 
   *
   *  @param string $color is "White" or "Black"
   *

@@ -41,7 +41,7 @@ class Piece
   *
   * @return void
   **/
-  public function __construct($position, $color)
+  public function __construct(array $position, $color)
   {
     $this->position = $position;
     $this->color = $color;
@@ -55,7 +55,7 @@ class Piece
   *
   * @return array with all the offboard positions removed
   **/
-  public function filterOnBoardPossibles($all_positions, $board)
+  public function filterOnBoardPossibles(array $all_positions, Board $board)
   {
     $onboard_moves = $all_positions;
     foreach ($onboard_moves as $key => $position) {
@@ -120,7 +120,7 @@ class Piece
   *
   * @return array with available moves for a given delta direction.
   **/
-  public function crawlDelta($delta, $src, $board)
+  public function crawlDelta(array $delta, array $src, Board $board)
   {  // there is some code smell here
     $possible_moves = array();
     $current_square = array( ($delta[0] + $src[0]), ($delta[1] + $src[1]) );
@@ -155,7 +155,7 @@ class Piece
   *
   * @return array with available moves for a given delta direction.
   **/
-  public function getDeltaLines($deltas, $src, $board)
+  public function getDeltaLines(array $deltas, array $src, Board $board)
   {
     $possible_moves = array();
     foreach ($deltas as $delta) {
@@ -185,7 +185,7 @@ class Pawn extends Piece
   *
   * @return array with all possible moves for $this piece.
   **/
-  public function getPossibleMoves($board)
+  public function getPossibleMoves(Board $board)
   {
     $row = $this->position[0]; // there is code smell here
     $col = $this->position[1]; // the cyclomatic complexity is too high
@@ -231,7 +231,7 @@ class Rook extends Piece
   *
   * @return array with all possible moves for $this piece.
   **/
-  public function getPossibleMoves($board)
+  public function getPossibleMoves(Board $board)
   {
     $deltas = $this->straight_deltas;
     $possible_moves = $this->getDeltaLines($deltas, $this->position, $board);
@@ -257,7 +257,7 @@ class Knight extends Piece
   *
   * @return array with all possible moves for $this piece.
   **/
-  public function getPossibleMoves($board)
+  public function getPossibleMoves(Board $board)
   {
     $row = $this->position[0];
     $col = $this->position[1];
@@ -292,7 +292,7 @@ class Bishop extends Piece
   *
   * @return array with all possible moves for $this piece.
   **/
-  public function getPossibleMoves($board)
+  public function getPossibleMoves(Board $board)
   {
     $deltas = $this->diagonal_deltas;
     $possible_moves = $this->getDeltaLines($deltas, $this->position, $board);
@@ -318,7 +318,7 @@ class Queen extends Piece
   *
   * @return array with all possible moves for $this piece.
   **/
-  public function getPossibleMoves($board)
+  public function getPossibleMoves(Board $board)
   {
     $deltas = array_merge($this->diagonal_deltas, $this->straight_deltas);
     $possible_moves = $this->getDeltaLines($deltas, $this->position, $board);
@@ -345,7 +345,7 @@ class King extends Piece
   *
   * @return array with all possible moves for $this piece.
   **/
-  public function getPossibleMoves($board)
+  public function getPossibleMoves(Board $board)
   {
     $row = $this->position[0];
     $col = $this->position[1];

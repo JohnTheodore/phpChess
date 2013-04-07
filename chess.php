@@ -71,7 +71,8 @@ class Game
     while (!$checkmate) {
       $current_player = (($this->turn % 2 == 0) ? $this->white : $this->black);
       if ($this->isCheck($current_player->color)) {
-        $interface->announceCheck(getColorsNames(findKing($current_player->color)));
+        $king = $this->board->findKing($current_player->color);
+        $this->interface->announceCheck($this->getColorsNames($king));
       }
 
       // add a line to check for check/checkmate... 
@@ -90,7 +91,7 @@ class Game
   *
   * @return array as src, dest, eg ( (0, 0), (0, 2) )
   **/
-  public function getValidMove($player)
+  public function getValidMove(HumanPlayer $player)
   {
     while (true) {
       $this->interface->promptMove($player);
@@ -110,7 +111,7 @@ class Game
   *
   * @return boolean true move is allowed, false move is not allowed.
   **/
-  public function isValidMove($src_and_dest, $player)
+  public function isValidMove(array $src_and_dest, HumanPlayer $player)
   { 
     if (($this->board->isOnBoard($src_and_dest[0])) 
         && ($this->board->isOnBoard($src_and_dest[1]))
@@ -152,7 +153,7 @@ class Game
   *
   * @return boolean, the piece is allowed to make that move (true) or false
   **/
-  public function isPossibleMove($src_piece, $dest)
+  public function isPossibleMove(Piece $src_piece, array $dest)
   {
     $possible_moves = $src_piece->getPossibleMoves($this->board);
     $moves = $src_piece->arrayToEnglish($possible_moves);
@@ -171,7 +172,7 @@ class Game
   *
   * @return void
   **/
-  public function makeMove($src_and_dest)
+  public function makeMove(array $src_and_dest)
   {
     $src = $src_and_dest[0];
     $dest = $src_and_dest[1];
@@ -195,7 +196,7 @@ class Game
   *
   * @return void
   **/
-  public function getColorsNames($piece)
+  public function getColorsNames(Piece $piece)
   {
     $capturer = ($piece->color == "White") ? $this->black : $this->white;
     $capturee = ($piece->color == "White") ? $this->white : $this->black;
@@ -304,7 +305,7 @@ class Game
   *
   * @return void
   **/
-  public function setupGame($options = array())
+  public function setupGame(array $options = array())
   {
     $default_opts = array("load_game" => false, "player_count" => 2, 
       "interface" => "CLI");
