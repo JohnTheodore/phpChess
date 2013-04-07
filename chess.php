@@ -1,12 +1,32 @@
 <?php
 
-  /** This is the main class for Chess **/
-  require 'board.php';
-  require 'piece.php';
-  require 'human_player.php';
-  require 'computer_player.php';
-  require 'cli_display.php';
+/**
+* chess.php
+*
+* PHP version 5
+*
+* @category Chess
+* @package  Chess
+* @author   John Theodore <JohnTheodore@github.com>
+* @license  MIT License
+* @link     www.github.com/JOhnTheodore/phpChess
+**/
 
+require 'board.php';
+require 'piece.php';
+require 'human_player.php';
+require 'computer_player.php';
+require 'cli_display.php';
+
+/** 
+* This board class is instantiated inside Chess->board 
+*
+* @category Chess
+* @package  Chess
+* @author   John Theodore <JohnTheodore@github.com>
+* @license  MIT License
+* @link     www.github.com/JOhnTheodore/phpChess
+**/
 class Game
 {
 
@@ -18,6 +38,17 @@ class Game
   public $interface;
   public $moves_history;
 
+  /** 
+  * Sets $this->board to new Board, which is an empty 2D array
+  * Sets $this->turn to 0, $this->turn is later used by play()
+  * to determine whose turn it is, W or B
+  * Sets $this->captured_pieces to an array which will eventually
+  * contain all the captured pieces from both sides.
+  * Sets $this->moves_history to an array that will eventually contain
+  * the moves history in the form ( (src),(dest) )
+  *
+  * @return void
+  **/
   public function __construct() 
   {
     /* refactor? */
@@ -27,7 +58,13 @@ class Game
     $this->moves_history = array();
   }
 
-  /** main play loop **/
+  /** 
+  * This is the main play loop, it sets the current player based on $this->turn
+  * then gets a move from the player. The move is validated by getValidMove().
+  * Finally the move is executed with makeMove();
+  * 
+  * @return void
+  **/
   public function play()
   {
     $checkmate = false;
@@ -46,7 +83,13 @@ class Game
     }
   }
 
-  /** continually ask for a move until a valid one is given **/
+  /** 
+  * continually ask for a move until a valid one is given 
+  *
+  * @param object $player is either a human or computer
+  *
+  * @return array as src, dest, eg ( (0, 0), (0, 2) )
+  **/
   public function getValidMove($player)
   {
     while (true) {
@@ -59,13 +102,19 @@ class Game
     return $src_and_dest;
   }
 
-  /** returns a boolean,  **/
+  /** 
+  * returns a boolean
+  *
+  * @param array  $src_and_dest contains the positions where a piece will move.
+  * @param object $player       is the player attempting the move      
+  *
+  * @return boolean true move is allowed, false move is not allowed.
+  **/
   public function isValidMove($src_and_dest, $player)
   { 
-    if ( ($this->board->isOnBoard($src_and_dest[0])) && 
-         ($this->board->isOnBoard($src_and_dest[1]))
-       )
-    {
+    if (($this->board->isOnBoard($src_and_dest[0])) 
+        && ($this->board->isOnBoard($src_and_dest[1]))
+    ) {
       $src = $src_and_dest[0];
       $dest = $src_and_dest[1];
       $src_piece = $this->board->get($src);
@@ -94,16 +143,30 @@ class Game
     }
   }
 
-  /** helper method to make isValidMove smaller, user input needs to match
-      what positions that piece object returns in getPossibleMoves **/
+  /** 
+  * helper method to make isValidMove smaller, user input needs to match
+  * what positions that piece object returns in getPossibleMoves 
+  *
+  * @param object $src_piece the chess piece object requesting to be moved
+  * @param array  $dest      dest position desired by the player for the piece
+  *
+  * @return boolean, the piece is allowed to make that move (true) or false
+  **/
   public function isPossibleMove($src_piece, $dest)
   {
     $possible_moves = $src_piece->getPossibleMoves($this->board);
     return array_search($dest, $possible_moves) !== false;
   }
-  /** moves the piece object from one position in the board array
-      to another position. If there is an enemy piece there it
-      will add it to the captured_pieces array when allowed  **/
+
+  /** 
+  * moves the piece object from one position in the board array to another 
+  * position. If there is an enemy piece there it will add it to the 
+  * captured_pieces array when allowed  
+  *
+  * @param array $src_and_dest is a nested array with ((src), (dest))
+  *
+  * @return void
+  **/
   public function makeMove($src_and_dest)
   {
     $src = $src_and_dest[0];
@@ -120,6 +183,14 @@ class Game
     $this->board->move($src, $dest);
   }
 
+  /**
+  * This takes a piece object and returns the potential capturer and capturee
+  * of that piece in the form of a hash table/associative array.
+  *
+  * @param object $piece is the piece being checked or captured
+  *
+  * @return void
+  **/
   public function getColorsNames($piece)
   {
     $capturer = ($piece->color == "White") ? $this->black : $this->white;
@@ -137,17 +208,26 @@ class Game
       );
   }
 
+  /** 
+  * not written yet 
+  *
+  * @return void
+  **/
   public function unmakeMove()
   {
     // If the move causes the acting player to be in check, it should 
     // unmake the move before it displays the board.
   }
 
-  /** This returns an array that contains all the initial positions for a
-      chess set, in the form of key as class Piece name and value as an
-      array with two keys which are color parameters for instatiating the 
-      object. Each of the color keys has further arrays that are the
-      position parameter for instatiating the piece object. **/
+  /** 
+  * This returns an array that contains all the initial positions for a chess 
+  * set, in the form of key as class Piece name and value as an array with two
+  * keys which are color parameters for instatiating the object. Each of the 
+  * color keys has further arrays that are the position parameter for 
+  * instatiating the piece object.
+  *
+  * @return array all default starting positions for a chess game
+  **/
   public function getInitialPositions()
   {
     return array(
@@ -175,8 +255,12 @@ class Game
     );
   }
 
-  /** This returns a plain array with all 32 chess piece objects. It will be
-      fed to the populate method in the board class. **/
+  /** 
+  * This returns a plain array with all 32 chess piece objects. It will be fed
+  * to the populate method in the board class. 
+  *
+  * @return array contains an array with all the 32 instantiated chess objects
+  **/
   public function getChessSet()
   {
     $chess_set = array();
@@ -190,6 +274,15 @@ class Game
     return $chess_set;
   }
 
+  /**
+  * This method finds the kind for a given $color. Then it uses getColorsNames
+  * which gives it more information than necessary, and uses that information
+  * to find all possible moves of the enemy color
+  *
+  * @param string $color is "White" or "Black"
+  *
+  * @return boolean true means the $color is in check, false is not in check.
+  **/
   public function isCheck($color)
   { 
     $king = $this->board->findKing($color);
@@ -198,8 +291,15 @@ class Game
     return array_search($king->position, $allEnemyMoves) !== false;
   }
 
-  /** This will configure a new game with human v human, human v computer, 
-      computer v human. Saved games can be loaded from this method too **/
+  /** 
+  * This will configure a new game with human v human, human v computer, 
+  * computer v human. Saved games can be loaded from this method too 
+  * 
+  * @param hash_table $options contains different settings for how the game
+  * can be loaded.
+  *
+  * @return void
+  **/
   public function setupGame($options = array())
   {
     $default_opts = array("load_game" => false, "player_count" => 2, 
@@ -216,6 +316,12 @@ class Game
     }
   }
 
+  /**
+  * THis sets both players to HumanPlayers since ComputerPlayer is not
+  * implemented.
+  *
+  * @return void
+  **/
   public function setPlayers()
   {           // $player_count = 2 as params later on?
     // Later on put some crap in here where they can choose to have...
@@ -227,7 +333,11 @@ class Game
 
 }
 
-/** bootstrapping the game **/
+/** 
+* bootstrapping the game 
+*
+* @return void
+**/
 function load()
 {
   $game = new Game;

@@ -1,19 +1,53 @@
 <?php
 
-/* this class should be really simple, just take input and validate it. */
+/**
+* chess.php
+*
+* PHP version 5
+*
+* @category Chess
+* @package  HumanPlayer
+* @author   John Theodore <JohnTheodore@github.com>
+* @license  MIT License
+* @link     www.github.com/JOhnTheodore/phpChess
+**/
+
+/** 
+* This class basically takes user input and converts it to array form eg (0, 0)
+*
+* @category Chess
+* @package  HumanPlayer
+* @author   John Theodore <JohnTheodore@github.com>
+* @license  MIT License
+* @link     www.github.com/JOhnTheodore/phpChess
+**/
 class HumanPlayer
 {
 
   public $color;
-  public $name; // this can be their username on the website later.
+  public $name;
 
+  /** 
+  * set the $color and $name instance variables 
+  *
+  * @param string $color is "White" or "Black"
+  * @param string $name  is "Alice" or "Bob"
+  *
+  * @return void
+  **/
   public function __construct($color, $name)
   {
     $this->color = $color;
     $this->name = $name;
   }
 
-  /** This takes  **/
+  /** 
+  * Converts user input a8, a7, to ( (0, 0), (0, 1) )  
+  *
+  * @param string $string the user input
+  *
+  * @return nested array in the form of ( (0, 0), (0, 1) ) 
+  **/
   public function engToArray($string)
   {
     $string_split = explode(", ", $string);
@@ -24,6 +58,11 @@ class HumanPlayer
     return array($src, $dest);
   }
 
+  /** 
+  * gets user input from STDIN and trims it  
+  *
+  * @return gives a nested array to the chess class.
+  **/
   public function getMove()
   {
     fwrite(STDOUT, "Where would you like to move? (eg, 'a2, a4')\n");
