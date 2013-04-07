@@ -155,6 +155,10 @@ class Game
   public function isPossibleMove($src_piece, $dest)
   {
     $possible_moves = $src_piece->getPossibleMoves($this->board);
+    $moves = $src_piece->arrayToEnglish($possible_moves);
+    $color = $src_piece->color;
+    $chessman = get_class($src_piece);
+    echo("{$color} {$chessman} moves: {$moves}") . "\n";
     return array_search($dest, $possible_moves) !== false;
   }
 
@@ -178,7 +182,7 @@ class Game
     if ($this->board->get($dest) != null) {
       $captured = $this->board->get($dest);
       $this->captured_pieces[] = $captured;
-      $this->interface->announceCapture(getColorsNames($captured));
+      $this->interface->announceCapture($this->getColorsNames($captured));
     }
     $this->board->move($src, $dest);
   }

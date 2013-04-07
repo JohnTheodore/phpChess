@@ -1,7 +1,7 @@
 <?php
 
   /**
-  * board.php
+  * This class will contain all the alive piece objects.
   *
   * PHP version 5
   *
@@ -13,7 +13,7 @@
   **/
 
   /** 
-  * This board class is instantiated inside Chess->board 
+  * This board class is instantiated inside Chess and stored as Chess->board 
   *
   * @category Chess
   * @package  Board

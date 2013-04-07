@@ -1,6 +1,6 @@
 <?php
 /**
-* chess.php
+* Unicode is heavily used to print to the command line interface.
 *
 * PHP version 5
 *
@@ -12,7 +12,10 @@
 **/
 
 /** 
-* This board class is instantiated inside Chess->board 
+* This interface is meant for the command line with a black background.
+* If you use a white background, the colors will be inverted. This is a
+* preference. Since I'm the only one who will likely ever use this game
+* this is what I decided. heh. You can invert setVisuals to change it around.
 *
 * @category Chess
 * @package  Interface
@@ -62,13 +65,13 @@ class CliDisplay
   *
   * @return string as an echo
   **/
-  public function announceCapture($piece)
+  public function announceCapture($colorsnames)
   {
-    $capturer = ($piece->color == "White") ? $this->black : $this->white;
-    $capturee = $this->otherPlayer($capturer);
-    $piece_class = get_class($piece);
-    echo("\n\n{$capturer->name} captured {$capturee->name}'s 
-              {$capturee->color} {$piece_class}!!! \n\n");
+    $capturer = $colorsnames["capturer"];
+    $capturee = $colorsnames["capturee"];
+    $piece    = $colorsnames["piece"];
+    echo("\n\n{$capturer["name"]} captured {$capturee["name"]}'s "
+         . "{$capturee["color"]} {$piece}!!! \n\n");
   }
 
   /**

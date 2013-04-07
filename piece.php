@@ -1,7 +1,8 @@
 <?php
 
 /**
-* piece.php
+* Captured pieces are inside Chess->$captured_pieces, all others are inside
+* Board->board
 *
 * PHP version 5
 *
@@ -75,7 +76,7 @@ class Piece
   *
   * @return array with all possible moves for $this piece.
   **/
-  public function filterNoFriendlyFire($positions, $board, $color)
+  public function filterNoFriendlyFire(Array $positions, Board $board, $color)
   {
     $no_friendly_fire = $positions;
     foreach ($no_friendly_fire as $key => $position) {
@@ -96,7 +97,7 @@ class Piece
   *
   * @return string eg. a2
   **/
-  public function arrayToEnglish($positions_array)
+  public function arrayToEnglish(Array $positions_array)
   {
     $english_position = "";
     foreach ($positions_array as $position) {
@@ -208,7 +209,6 @@ class Pawn extends Piece
         $possible_moves[] = array(($row + $direction), $col + $diagonal);
       }
     }  
-    echo("Available moves: " . $this->arrayToEnglish($possible_moves) . "\n");
     return $possible_moves;
   }
 }
@@ -235,7 +235,6 @@ class Rook extends Piece
   {
     $deltas = $this->straight_deltas;
     $possible_moves = $this->getDeltaLines($deltas, $this->position, $board);
-    echo("Available moves: " . $this->arrayToEnglish($possible_moves) . "\n");
     return $possible_moves;
   }
 }
@@ -271,7 +270,6 @@ class Knight extends Piece
     );
     $onboard_moves = $this->filterOnBoardPossibles($all_moves, $board);
     $possible_moves = $this->filterNoFriendlyFire($onboard_moves, $board, $color);
-    echo("Available moves: " . $this->arrayToEnglish($possible_moves) . "\n");
     return $possible_moves;
   }
 }
@@ -298,7 +296,6 @@ class Bishop extends Piece
   {
     $deltas = $this->diagonal_deltas;
     $possible_moves = $this->getDeltaLines($deltas, $this->position, $board);
-    echo("Available moves: " . $this->arrayToEnglish($possible_moves) . "\n");
     return $possible_moves;
   }
 }
@@ -325,7 +322,6 @@ class Queen extends Piece
   {
     $deltas = array_merge($this->diagonal_deltas, $this->straight_deltas);
     $possible_moves = $this->getDeltaLines($deltas, $this->position, $board);
-    echo("Available moves: " . $this->arrayToEnglish($possible_moves) . "\n");
     return $possible_moves;
   }
 }
@@ -362,7 +358,6 @@ class King extends Piece
     );
     $onboard_moves = $this->filterOnBoardPossibles($all_moves, $board);
     $possible_moves = $this->filterNoFriendlyFire($onboard_moves, $board, $color);
-    echo("Available moves: " . $this->arrayToEnglish($possible_moves) . "\n");
     return $onboard_moves;
   }
 }

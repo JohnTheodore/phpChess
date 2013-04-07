@@ -1,7 +1,7 @@
 <?php
 
 /**
-* chess.php
+* ComputerPlayer not yet implemented.
 *
 * PHP version 5
 *

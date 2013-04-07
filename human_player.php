@@ -1,7 +1,7 @@
 <?php
 
 /**
-* chess.php
+* HumanPlayer is stored as $white or $black instance variable inside Chess
 *
 * PHP version 5
 *
