@@ -70,10 +70,10 @@ class Game
     $checkmate = false;
     while (!$checkmate) {
       $current_player = (($this->turn % 2 == 0) ? $this->white : $this->black);
-      if ($this->isCheck($current_player->color)) {
-        $king = $this->board->findKing($current_player->color);
-        $this->interface->announceCheck($this->getColorsNames($king));
-      }
+      // if ($this->isCheck($current_player->color)) {
+      //   $king = $this->board->findKing($current_player->color);
+      //   $this->interface->announceCheck($this->getColorsNames($king));
+      // }
 
       // add a line to check for check/checkmate... 
 
@@ -177,8 +177,6 @@ class Game
     $src = $src_and_dest[0];
     $dest = $src_and_dest[1];
     $mobile_piece = $this->board->get($src);
-    $mobile_piece->position = $dest;
-    $mobile_piece->moves++;
 
     if ($this->board->get($dest) != null) {
       $captured = $this->board->get($dest);
@@ -277,23 +275,6 @@ class Game
       }
     }
     return $chess_set;
-  }
-
-  /**
-  * This method finds the kind for a given $color. Then it uses getColorsNames
-  * which gives it more information than necessary, and uses that information
-  * to find all possible moves of the enemy color
-  *
-  * @param string $color is "White" or "Black"
-  *
-  * @return boolean true means the $color is in check, false is not in check.
-  **/
-  public function isCheck($color)
-  { 
-    $king = $this->board->findKing($color);
-    $colors = $this->getColorsNames($king);
-    $allEnemyMoves = $this->board->getAllPossibleMoves($colors["capturer"]["color"]);
-    return array_search($king->position, $allEnemyMoves) !== false;
   }
 
   /** 

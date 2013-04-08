@@ -27,7 +27,7 @@ class Piece
 {
   public $position;
   public $color;
-  public $moves;
+  public $moves = 0;
   public $straight_deltas = array( array(-1, 0), array(1, 0), array(0, -1), 
     array(0, 1) );
   public $diagonal_deltas = array( array(1, 1), array(1, -1),  array(-1, 1), 
@@ -55,7 +55,7 @@ class Piece
   *
   * @return array with all the offboard positions removed
   **/
-  public function filterOnBoardPossibles(array $all_positions, Board $board)
+  public function filterNoOffBoardPossibles(array $all_positions, Board $board)
   {
     $onboard_moves = $all_positions;
     foreach ($onboard_moves as $key => $position) {
@@ -87,6 +87,53 @@ class Piece
       }
     }
     return $no_friendly_fire;
+  }
+
+  /**
+  * Takes an array, copies it.. throws out positions where if you went there
+  * you would put your own king into check.
+  *
+  * @param array  $positions including ones that your king gets checked
+  * @param object $board     contains all the pieces/positions.
+  * @param array  $src       the position of the piece moving/protecting king
+  *
+  * @return array with all possible moves for $this piece.
+  **/
+  public function filterNoKingCheck(Array $positions, Board $board, array $src)
+  {
+    $no_king_check_array = array();
+    $piece = $board->get($src);
+    //var_dump($board);
+    $king = $board->findKing($piece->color);
+    var_dump($king);
+    foreach ($positions as $position) {
+      $board_copy = $board;
+      $board_copy->move($piece->position, $position);
+      //var_dump($this->isCheck($king, $board_copy));
+      if (!$this->isCheck($king, $board_copy)) {
+        array_push($no_king_check_array, $position);
+      }
+    }
+    //var_dump($no_king_check_array);
+    return $no_king_check_array;
+  }
+
+  /**
+  * This method receives a copied board object, with moves some of which
+  * might put the king into check. It returns false when not.
+  *
+  * @param Object $king  is being used to find if that king is in check.
+  * @param Board  $board will be used as a fake board, to find out where
+  * moves are allowed and where they are not allowed.
+  *
+  * @return boolean true means the $king is in check, false is not in check.
+  **/
+  public function isCheck(King $king, Board $board)
+  { 
+    $enemy_color = ($king->color == "White") ? "Black" : "White";
+    $allEnemyMoves = $board->getAllPossibleMoves($enemy_color);
+    var_dump(array_search($king->position, $allEnemyMoves) !== false);
+    return array_search($king->position, $allEnemyMoves) !== false;
   }
 
   /**
@@ -208,8 +255,8 @@ class Pawn extends Piece
       ) { // allowed to attack diagonally
         $possible_moves[] = array(($row + $direction), $col + $diagonal);
       }
-    }  
-    return $possible_moves;
+    }
+    return $this->filterNoKingCheck($possible_moves, $board, $this->position);
   }
 }
 
@@ -252,7 +299,7 @@ class Knight extends Piece
 {
   /**
   * The $all_moves probably has moves that aren't possible. It gets culled
-  * by filterOnBoardPossibles() and filterNoFriendlyFire();
+  * by filterNoOffBoardPossibles() and filterNoFriendlyFire();
   *
   * @param object $board which contains all the positions of all pieces.
   *
@@ -269,7 +316,7 @@ class Knight extends Piece
       array( ($row + 1), ($col + 2) ), array( ($row + 1), ($col - 2) ),
       array( ($row - 1), ($col + 2) ), array( ($row - 1), ($col - 2) )
     );
-    $onboard_moves = $this->filterOnBoardPossibles($all_moves, $board);
+    $onboard_moves = $this->filterNoOffBoardPossibles($all_moves, $board);
     $possible_moves = $this->filterNoFriendlyFire($onboard_moves, $board, $color);
     return $possible_moves;
   }
@@ -343,7 +390,7 @@ class King extends Piece
 
   /**
   * The $all_moves could have moves that aren't possible. It gets culled
-  * by filterOnBoardPossibles() and filterNoFriendlyFire();
+  * by filterNoOffBoardPossibles() and filterNoFriendlyFire();
   *
   * @param object $board which contains all the positions of all pieces.
   *
@@ -360,7 +407,7 @@ class King extends Piece
       array($row, $col - 1), array($row + 1, $col - 1), 
       array($row - 1, $col), array($row + 1, $col) 
     );
-    $onboard_moves = $this->filterOnBoardPossibles($all_moves, $board);
+    $onboard_moves = $this->filterNoOffBoardPossibles($all_moves, $board);
     $possible_moves = $this->filterNoFriendlyFire($onboard_moves, $board, $color);
     return $onboard_moves;
   }

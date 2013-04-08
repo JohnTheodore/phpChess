@@ -103,6 +103,8 @@ class Board
     $mobile_piece = ($this->board[$src[0]][$src[1]]);
     $this->board[$src[0]][$src[1]] = null;
     $this->board[$dest[0]][$dest[1]] = $mobile_piece;
+    $mobile_piece->position = $dest;
+    $mobile_piece->moves++;
   }
 
   /** 
@@ -131,7 +133,7 @@ class Board
   /** 
   * returns the King object for a given color 
   *
-  *  @param string $color is "White" or "Black"
+  * @param string $color is "White" or "Black"
   *
   * @return object that is the king piece of the given color
   **/
