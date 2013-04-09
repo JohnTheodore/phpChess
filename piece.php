@@ -91,7 +91,9 @@ class Piece
 
   /**
   * Takes an array, copies it.. throws out positions where if you went there
-  * you would put your own king into check.
+  * you would put your own king into check. I am using the serialize method
+  * because php doesn't do deep copies with clone, that mutates pieces and 
+  * the board.
   *
   * @param array  $positions including ones that your king gets checked
   * @param object $board     contains all the pieces/positions.
@@ -102,18 +104,17 @@ class Piece
   public function filterNoKingCheck(Array $positions, Board $board, array $src)
   {
     $no_king_check_array = array();
-    if (is_object($board->get($src))) {
-      $piece_copy = clone $board->get($src);
-    } else {
-      var_dump($src); var_dump($piece_copy);
-    }
+    $piece = $board->get($src);
+    $piece_copy = unserialize(serialize($piece));
     $king = $board->findKing($piece_copy->color);
+    $king_copy = unserialize(serialize($king));
     foreach ($positions as $position) {
-      $board_copy = clone $board;
+      $board_copy = unserialize(serialize($board));
       $board_copy->move($piece_copy->position, $position);
-      if (!$this->isCheck($king, $board_copy)) {
+      if (!$this->isCheck($king_copy, $board_copy)) {
         array_push($no_king_check_array, $position);
       }
+      $board_copy->move($position, $piece_copy->position);
     }
     return $no_king_check_array;
   }
@@ -136,10 +137,9 @@ class Piece
   }
 
   /**
-  * desc
+  * Converts (0, 0) to a8
   *
-  * @param array $positions_array contains something like (0, 0) and outputs
-  * something like a2
+  * @param array $positions_array contains something like (0, 0)
   *
   * @return string eg. a2
   **/
@@ -149,7 +149,7 @@ class Piece
     foreach ($positions_array as $position) {
       $row = (8 - $position[0]);
       $col = ( chr($position[1] + 97) );
-      $english_position .= "{$col}{$row}, ";
+      $english_position .= "{$col}{$row} ";
     }
     return $english_position;
   }
@@ -237,7 +237,7 @@ class Pawn extends Piece
   *
   * @return array with all possible moves for $this piece.
   **/
-  public function getPossibleMoves(Board $board, $loop = true)
+  public function getPossibleMoves(Board $board, $loop = false)
   {
     $row = $this->position[0]; // there is code smell here
     $col = $this->position[1]; // the cyclomatic complexity is too high
@@ -262,7 +262,10 @@ class Pawn extends Piece
       }
     }
     if ($loop) {
-      return $this->filterNoKingCheck($possible_moves, $board, $this->position);
+      //echo "\n\nHello\n\n";
+      $no_checks = $this->filterNoKingCheck($possible_moves, $board, $this->position);
+      $this->arrayToEnglish($possible_moves);
+      return $no_checks;
     } else {
       return $possible_moves;
     }
@@ -443,7 +446,7 @@ class King extends Piece
       return $this->filterNoKingCheck($possible_moves, $board, $this->position);
     } else {
       return $possible_moves;
-    }                                                                                                     
+    }                                                                                            
   }
 }
 ?>

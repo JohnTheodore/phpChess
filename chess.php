@@ -70,6 +70,11 @@ class Game
     $current_player = $this->white;
     while (!$this->isCheckMate($current_player->color)) {
       $current_player = (($this->turn % 2 == 0) ? $this->white : $this->black);
+      $king = $this->board->findKing($current_player->color);
+      if ($king->isCheck($king, $this->board)) {
+        echo "\n\n holy crap, you're in check \n\n";
+      }
+
       $this->interface->displayBoard($this->board->board);
 
       $this->getInfo($current_player->color);
@@ -148,7 +153,7 @@ class Game
       return true; 
     } else { // allow the move only if the piece getPossibleMoves
       // contains the dest position
-      return false;
+      echo "not a valid move for this piece\n"; return false;
     }
   }
 
@@ -162,7 +167,7 @@ class Game
   **/
   public function isCheckMate($color)
   {
-    return (count($this->board->getAllPossibleMoves($color, $loop = true)) == 0);
+    return (count($this->board->getAllPossibleMoves($color, $loop = true)) == 1);
   }
 
   /** 
