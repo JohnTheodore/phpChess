@@ -102,19 +102,15 @@ class Piece
   public function filterNoKingCheck(Array $positions, Board $board, array $src)
   {
     $no_king_check_array = array();
-    $piece = $board->get($src);
-    //var_dump($board);
-    $king = $board->findKing($piece->color);
-    var_dump($king);
+    $piece_copy = clone $board->get($src);
+    $king = $board->findKing($piece_copy->color);
     foreach ($positions as $position) {
-      $board_copy = $board;
-      $board_copy->move($piece->position, $position);
-      //var_dump($this->isCheck($king, $board_copy));
+      $board_copy = clone $board;
+      $board_copy->move($piece_copy->position, $position);
       if (!$this->isCheck($king, $board_copy)) {
         array_push($no_king_check_array, $position);
       }
     }
-    //var_dump($no_king_check_array);
     return $no_king_check_array;
   }
 
@@ -132,7 +128,6 @@ class Piece
   { 
     $enemy_color = ($king->color == "White") ? "Black" : "White";
     $allEnemyMoves = $board->getAllPossibleMoves($enemy_color);
-    var_dump(array_search($king->position, $allEnemyMoves) !== false);
     return array_search($king->position, $allEnemyMoves) !== false;
   }
 
@@ -229,10 +224,11 @@ class Pawn extends Piece
   * This method is a little complicated and could be simplified.
   *
   * @param object $board which contains all the positions of all pieces.
+  * @param bool   $loop  is to make sure isCheck doesn't go inifinitely
   *
   * @return array with all possible moves for $this piece.
   **/
-  public function getPossibleMoves(Board $board)
+  public function getPossibleMoves(Board $board, $loop = true)
   {
     $row = $this->position[0]; // there is code smell here
     $col = $this->position[1]; // the cyclomatic complexity is too high
@@ -256,7 +252,11 @@ class Pawn extends Piece
         $possible_moves[] = array(($row + $direction), $col + $diagonal);
       }
     }
-    return $this->filterNoKingCheck($possible_moves, $board, $this->position);
+    if ($loop) {
+      return $this->filterNoKingCheck($possible_moves, $board, $this->position);
+    } else {
+      return $possible_moves;
+    }
   }
 }
 
@@ -275,14 +275,19 @@ class Rook extends Piece
   * This uses straight_lines delta set, and throws it to getDeltas / crawlDelta
   *
   * @param object $board which contains all the positions of all pieces.
+  * @param bool   $loop  is to make sure isCheck doesn't go inifinitely
   *
   * @return array with all possible moves for $this piece.
   **/
-  public function getPossibleMoves(Board $board)
+  public function getPossibleMoves(Board $board, $loop = true)
   {
     $deltas = $this->straight_deltas;
     $possible_moves = $this->getDeltaLines($deltas, $this->position, $board);
-    return $possible_moves;
+    if ($loop) {
+      return $this->filterNoKingCheck($possible_moves, $board, $this->position);
+    } else {
+      return $possible_moves;
+    }
   }
 }
 
@@ -302,10 +307,11 @@ class Knight extends Piece
   * by filterNoOffBoardPossibles() and filterNoFriendlyFire();
   *
   * @param object $board which contains all the positions of all pieces.
+  * @param bool   $loop  is to make sure isCheck doesn't go inifinitely
   *
   * @return array with all possible moves for $this piece.
   **/
-  public function getPossibleMoves(Board $board)
+  public function getPossibleMoves(Board $board, $loop = true)
   {
     $row = $this->position[0];
     $col = $this->position[1];
@@ -318,7 +324,11 @@ class Knight extends Piece
     );
     $onboard_moves = $this->filterNoOffBoardPossibles($all_moves, $board);
     $possible_moves = $this->filterNoFriendlyFire($onboard_moves, $board, $color);
-    return $possible_moves;
+    if ($loop) {
+      return $this->filterNoKingCheck($possible_moves, $board, $this->position);
+    } else {
+      return $possible_moves;
+    }
   }
 }
 
@@ -337,14 +347,19 @@ class Bishop extends Piece
   * This uses diagonal_lines delta set, and throws it to getDeltas / crawlDelta
   *
   * @param object $board which contains all the positions of all pieces.
+  * @param bool   $loop  is to make sure isCheck doesn't go inifinitely
   *
   * @return array with all possible moves for $this piece.
   **/
-  public function getPossibleMoves(Board $board)
+  public function getPossibleMoves(Board $board, $loop = true)
   {
     $deltas = $this->diagonal_deltas;
     $possible_moves = $this->getDeltaLines($deltas, $this->position, $board);
-    return $possible_moves;
+    if ($loop) {
+      return $this->filterNoKingCheck($possible_moves, $board, $this->position);
+    } else {
+      return $possible_moves;
+    }
   }
 }
 
@@ -365,14 +380,19 @@ class Queen extends Piece
   * getDeltas and crawlDelta to get all the possible moves.
   *
   * @param object $board which contains all the positions of all pieces.
+  * @param bool   $loop  is to make sure isCheck doesn't go inifinitely
   *
   * @return array with all possible moves for $this piece.
   **/
-  public function getPossibleMoves(Board $board)
+  public function getPossibleMoves(Board $board, $loop = true)
   {
     $deltas = array_merge($this->diagonal_deltas, $this->straight_deltas);
     $possible_moves = $this->getDeltaLines($deltas, $this->position, $board);
-    return $possible_moves;
+    if ($loop) {
+      return $this->filterNoKingCheck($possible_moves, $board, $this->position);
+    } else {
+      return $possible_moves;
+    }
   }
 }
 
@@ -393,10 +413,11 @@ class King extends Piece
   * by filterNoOffBoardPossibles() and filterNoFriendlyFire();
   *
   * @param object $board which contains all the positions of all pieces.
+  * @param bool   $loop  is to make sure isCheck doesn't go inifinitely
   *
   * @return array with all possible moves for $this piece.
   **/
-  public function getPossibleMoves(Board $board)
+  public function getPossibleMoves(Board $board, $loop = true)
   {
     $row = $this->position[0];
     $col = $this->position[1];
@@ -405,11 +426,15 @@ class King extends Piece
       array($row - 1, $col + 1), array($row, $col + 1), 
       array($row + 1, $col + 1), array($row - 1, $col - 1),
       array($row, $col - 1), array($row + 1, $col - 1), 
-      array($row - 1, $col), array($row + 1, $col) 
+      array($row - 1, $col), array($row + 1, $col)
     );
     $onboard_moves = $this->filterNoOffBoardPossibles($all_moves, $board);
     $possible_moves = $this->filterNoFriendlyFire($onboard_moves, $board, $color);
-    return $onboard_moves;
+    if ($loop) {
+      return $this->filterNoKingCheck($possible_moves, $board, $this->position);
+    } else {
+      return $possible_moves;
+    }                                                                                                     
   }
 }
 ?>

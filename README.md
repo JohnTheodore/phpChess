@@ -10,7 +10,6 @@ php chess.php; // to run the game
 * check
 * checkmate
 * filter user input more so they can throw in garbage
-* unmake move on check?
 * load game functionality
 * allow pawns to get promoted when they reach the end.
 

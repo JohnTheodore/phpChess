@@ -82,6 +82,7 @@ class Game
       $this->turn++;
       $this->makeMove($current_move);
     }
+    //output game over, blah blah
   }
 
   /** 
@@ -96,6 +97,7 @@ class Game
     while (true) {
       $this->interface->promptMove($player);
       $src_and_dest = $player->getMove();
+      //$this->interface->displayBoard($this->board->board);
       if ($this->isValidMove($src_and_dest, $player)) { 
         break; 
       }
@@ -124,7 +126,9 @@ class Game
       return false; // need valid src and dest positions
     }
 
-    if ($src_piece->color != $player->color) { 
+    if (!is_object($src_piece)) {
+      echo "no piece there\n"; return false;
+    } elseif ($src_piece->color != $player->color) { 
       echo "wrong color\n"; return false; 
     } elseif ($src == $dest) {
       // Only move your own piece. 
@@ -176,13 +180,13 @@ class Game
   {
     $src = $src_and_dest[0];
     $dest = $src_and_dest[1];
-    $mobile_piece = $this->board->get($src);
 
     if ($this->board->get($dest) != null) {
       $captured = $this->board->get($dest);
       $this->captured_pieces[] = $captured;
       $this->interface->announceCapture($this->getColorsNames($captured));
     }
+    // if pawn position is at the end, upgrade it.
     $this->board->move($src, $dest);
   }
 
@@ -209,17 +213,6 @@ class Game
                           "color" => $capturee->color
             )
       );
-  }
-
-  /** 
-  * not written yet 
-  *
-  * @return void
-  **/
-  public function unmakeMove()
-  {
-    // If the move causes the acting player to be in check, it should 
-    // unmake the move before it displays the board.
   }
 
   /** 

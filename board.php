@@ -100,11 +100,11 @@ class Board
   **/
   public function move(array $src, array $dest)
   {
-    $mobile_piece = ($this->board[$src[0]][$src[1]]);
-    $this->board[$src[0]][$src[1]] = null;
-    $this->board[$dest[0]][$dest[1]] = $mobile_piece;
+    $mobile_piece = ($this->get($src));
     $mobile_piece->position = $dest;
     $mobile_piece->moves++;
+    $this->board[$src[0]][$src[1]] = null;
+    $this->board[$dest[0]][$dest[1]] = $mobile_piece;
   }
 
   /** 
@@ -120,7 +120,7 @@ class Board
     foreach ($this->board as $row) {
       foreach ($row as $square) {
         if ( (is_object($square)) && ($square->color == $color) ) {
-          foreach ($square->getPossibleMoves($this) as $move) {
+          foreach ($square->getPossibleMoves($this, $loop = false) as $move) {
             array_push($allMoves, $move);
           }
         }
