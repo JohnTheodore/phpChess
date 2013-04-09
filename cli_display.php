@@ -61,7 +61,7 @@ class CliDisplay
   /**
   * Simple string output to CLI annoucing a piece capture.
   *
-  * @param object $piece is the captured object.
+  * @param array $colorsnames has strings colors/names
   *
   * @return string as an echo
   **/
@@ -77,7 +77,7 @@ class CliDisplay
   /**
   * Simple string output to CLI annoucing a check has occurred.
   *
-  * @param object $player is a player
+  * @param object $colorsnames has strings colors/names
   *
   * @return
   **/
@@ -88,6 +88,21 @@ class CliDisplay
     $piece    = $colorsnames["piece"];
     echo("\n\n{$capturer["name"]} has put {$capturee["name"]}'s "
          . "{$capturee["color"]} {$piece} into check!!! \n\n");
+  }
+
+  /**
+  * Simple string output to CLI annoucing a check has occurred.
+  *
+  * @param object $colorsnames has strings colors/names
+  *
+  * @return
+  **/
+  public function announceCheckMate(array $colorsnames)
+  {
+    $capturer = $colorsnames["capturer"];
+    $capturee = $colorsnames["capturee"];
+    echo("\n\n{$capturer["name"]} has put {$capturee["name"]} "
+         . "into checkmate!!! \n\n");
   }
 
   /**

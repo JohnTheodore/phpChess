@@ -67,22 +67,15 @@ class Game
   **/
   public function play()
   {
-    $checkmate = false;
-    while (!$checkmate) {
+    $current_player = $this->white;
+    while (!$this->isCheckMate($current_player)) {
       $current_player = (($this->turn % 2 == 0) ? $this->white : $this->black);
-      // if ($this->isCheck($current_player->color)) {
-      //   $king = $this->board->findKing($current_player->color);
-      //   $this->interface->announceCheck($this->getColorsNames($king));
-      // }
-
-      // add a line to check for check/checkmate... 
-
       $this->interface->displayBoard($this->board->board);
       $current_move = $this->getValidMove($current_player);
       $this->turn++;
       $this->makeMove($current_move);
     }
-    //output game over, blah blah
+    announceCheckMate($this->getColorsNames($this->board->findKing($current_player->color)));
   }
 
   /** 
@@ -146,6 +139,19 @@ class Game
       // contains the dest position
       return false;
     }
+  }
+
+  /**
+  * returns boolean, true checkmate gameover, false.. keep going. If the
+  * player has no available moves, he is checkmated.
+  * 
+  * @param string $color is "White" or "Black"
+  *
+  * @return boolean true is game over, false is keep going.
+  **/
+  public function isCheckMate($color)
+  {
+    return (count($this->board->getAllPossibleMoves($color)) > 0);
   }
 
   /** 
