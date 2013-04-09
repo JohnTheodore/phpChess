@@ -102,7 +102,11 @@ class Piece
   public function filterNoKingCheck(Array $positions, Board $board, array $src)
   {
     $no_king_check_array = array();
-    $piece_copy = clone $board->get($src);
+    if (is_object($board->get($src))) {
+      $piece_copy = clone $board->get($src);
+    } else {
+      var_dump($src); var_dump($piece_copy);
+    }
     $king = $board->findKing($piece_copy->color);
     foreach ($positions as $position) {
       $board_copy = clone $board;
@@ -127,7 +131,7 @@ class Piece
   public function isCheck(King $king, Board $board)
   { 
     $enemy_color = ($king->color == "White") ? "Black" : "White";
-    $allEnemyMoves = $board->getAllPossibleMoves($enemy_color);
+    $allEnemyMoves = $board->getAllPossibleMoves($enemy_color, $loop = false);
     return array_search($king->position, $allEnemyMoves) !== false;
   }
 
@@ -167,17 +171,22 @@ class Piece
     $possible_moves = array();
     $current_square = array( ($delta[0] + $src[0]), ($delta[1] + $src[1]) );
     $src_piece = $board->Get($src);
-    while (($board->IsOnBoard($current_square)) && 
+    while ( ($board->IsOnBoard($current_square)) && 
             ( ($board->Get($current_square) == null) || 
-              (is_object($board->Get($current_square))
-            ) && 
-             ($src_piece->color != $board->Get($current_square)->color) ) ) {
-      $possible_moves[] = $current_square;
+              (is_object($board->Get($current_square)))
+            )
+          ) {
       if ((is_object($board->Get($current_square))) 
-          && ($src_piece->color != $board->Get($current_square)->color)
+          && ($src_piece->color == $board->Get($current_square)->color)
       ) { 
         break; 
+      } elseif ((is_object($board->Get($current_square))) 
+          && ($src_piece->color != $board->Get($current_square)->color) 
+      ) {
+        $possible_moves[] = $current_square;
+        break;
       }
+      $possible_moves[] = $current_square;
       $current_square = array( ($current_square[0] + $delta[0]), 
                                ($current_square[1] + $delta[1]) 
                         );
