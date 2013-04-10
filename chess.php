@@ -68,12 +68,14 @@ class Game
   public function play()
   {
     $current_player = $this->white;
-    while ($this->isCheckMate($current_player)) {
-      $current_player = (($this->turn % 2 == 0) ? $this->white : $this->black);
+    while (!$this->isCheckMate($current_player->color)) {
+      //$current_player = (($this->turn % 2 == 0) ? $this->white : $this->black);
       $king = $this->board->findKing($current_player->color);
+      $enemy_color = ($king->color == "White") ? "Black" : "White";
     
-      if ($king->isCheck($king, $this->board)) {
-        echo "\n\n holy crap, you're in check \n\n";
+      if ($king->isCheck($enemy_color, $this->board)) {
+        $name = $current_player->name;
+        echo "\n\n holy crap, {$name} is in check \n\n";
       }
 
       $this->interface->displayBoard($this->board->board);
@@ -82,10 +84,26 @@ class Game
 
       $current_move = $this->getValidMove($current_player);
       $this->turn++;
+      $current_player = (($this->turn % 2 == 0) ? $this->white : $this->black);
       $this->makeMove($current_move);
     }
     $names = $this->getColorsNames($this->board->findKing($current_player->color));
     $this->interface->announceCheckMate($names);
+  }
+
+  /**
+  * returns boolean, true checkmate gameover, false.. keep going. If the
+  * player has no available moves, he is checkmated.
+  * 
+  * @param string $color is "White" or "Black"
+  *
+  * @return boolean true is game over, false is keep going.
+  **/
+  public function isCheckMate($color)
+  {
+    var_dump(count($this->board->getAllPossibleMoves($color, true)) == 0);
+    var_dump($color);
+    return (count($this->board->getAllPossibleMoves($color, true)) == 0);
   }
 
 
@@ -156,19 +174,6 @@ class Game
       // contains the dest position
       return false;
     }
-  }
-
-  /**
-  * returns boolean, true checkmate gameover, false.. keep going. If the
-  * player has no available moves, he is checkmated.
-  * 
-  * @param string $color is "White" or "Black"
-  *
-  * @return boolean true is game over, false is keep going.
-  **/
-  public function isCheckMate($color)
-  {
-    return (count($this->board->getAllPossibleMoves($color)) == 0);
   }
 
   /** 

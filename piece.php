@@ -103,11 +103,11 @@ class Piece
   {
     $no_king_check_array = array();
     $piece_copy = unserialize(serialize($board->get($src)));
-    $king = $board->findKing($piece_copy->color);
+    $enemy_color = ($piece_copy->color == "White") ? "Black" : "White";
     foreach ($positions as $position) {
       $board_copy = unserialize(serialize($board));
       $board_copy->move($piece_copy->position, $position);
-      if (!$this->isCheck($king, $board_copy)) {
+      if (!$this->isCheck($enemy_color, $board_copy)) {
         array_push($no_king_check_array, $position);
       }
     }
@@ -124,10 +124,11 @@ class Piece
   *
   * @return boolean true means the $king is in check, false is not in check.
   **/
-  public function isCheck(King $king, Board $board)
+  public function isCheck($enemy_color, Board $board)
   { 
-    $enemy_color = ($king->color == "White") ? "Black" : "White";
     $allEnemyMoves = $board->getAllPossibleMoves($enemy_color, false);
+    $color = ($enemy_color == "White") ? "Black" : "White";
+    $king = $board->findKing($color);
     return array_search($king->position, $allEnemyMoves) !== false;
   }
 
