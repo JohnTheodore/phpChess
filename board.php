@@ -114,13 +114,13 @@ class Board
   *
   * @return array with all possible moves for a given color
   **/
-  public function getAllPossibleMoves($color)
+  public function getAllPossibleMoves($color, $loop = false)
   {
     $allMoves = array();
     foreach ($this->board as $row) {
       foreach ($row as $square) {
         if ( (is_object($square)) && ($square->color == $color) ) {
-          foreach ($square->getPossibleMoves($this, $loop = false) as $move) {
+          foreach ($square->getPossibleMoves($this, $loop) as $move) {
             array_push($allMoves, $move);
           }
         }

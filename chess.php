@@ -70,13 +70,29 @@ class Game
     $current_player = $this->white;
     while ($this->isCheckMate($current_player)) {
       $current_player = (($this->turn % 2 == 0) ? $this->white : $this->black);
+      $king = $this->board->findKing($current_player->color);
+    
+      if ($king->isCheck($king, $this->board)) {
+        echo "\n\n holy crap, you're in check \n\n";
+      }
+
       $this->interface->displayBoard($this->board->board);
+
+      $this->getInfo($current_player->color);
+
       $current_move = $this->getValidMove($current_player);
       $this->turn++;
       $this->makeMove($current_move);
     }
     $names = $this->getColorsNames($this->board->findKing($current_player->color));
     $this->interface->announceCheckMate($names);
+  }
+
+
+  public function getInfo($color)
+  {
+    var_dump($color);
+    var_dump(count($this->board->getAllPossibleMoves($color, true)));
   }
 
   /** 

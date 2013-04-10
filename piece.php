@@ -127,7 +127,7 @@ class Piece
   public function isCheck(King $king, Board $board)
   { 
     $enemy_color = ($king->color == "White") ? "Black" : "White";
-    $allEnemyMoves = $board->getAllPossibleMoves($enemy_color);
+    $allEnemyMoves = $board->getAllPossibleMoves($enemy_color, false);
     return array_search($king->position, $allEnemyMoves) !== false;
   }
 
