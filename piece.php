@@ -104,17 +104,26 @@ class Piece
   public function filterNoKingCheck(Array $positions, Board $board, array $src)
   {
     $no_king_check_array = array();
-    $piece = $board->get($src);
-    $piece_copy = unserialize(serialize($piece));
-    $king = $board->findKing($piece_copy->color);
-    $king_copy = unserialize(serialize($king));
+
+    
     foreach ($positions as $position) {
+      $piece = $board->get($src);
+      $piece_copy = unserialize(serialize($piece));
+      $king = $board->findKing($piece_copy->color);
+      $king_copy = unserialize(serialize($king));
       $board_copy = unserialize(serialize($board));
       $board_copy->move($piece_copy->position, $position);
+
       if (!$this->isCheck($king_copy, $board_copy)) {
+      
+        // $color = $piece_copy->color;
+        // $class = get_class($piece_copy);
+        // $posit = $this->arrayToEnglish(array($position);
+        // echo("The {$color} {$class} at {$posit} \n");
+
+
         array_push($no_king_check_array, $position);
       }
-      $board_copy->move($position, $piece_copy->position);
     }
     return $no_king_check_array;
   }
@@ -130,9 +139,10 @@ class Piece
   * @return boolean true means the $king is in check, false is not in check.
   **/
   public function isCheck(King $king, Board $board)
-  { 
+  {
     $enemy_color = ($king->color == "White") ? "Black" : "White";
     $allEnemyMoves = $board->getAllPossibleMoves($enemy_color, $loop = false);
+    //$positions = $allEnemyMoves[array_search($king->position, $allEnemyMoves)];
     return array_search($king->position, $allEnemyMoves) !== false;
   }
 
@@ -262,10 +272,7 @@ class Pawn extends Piece
       }
     }
     if ($loop) {
-      //echo "\n\nHello\n\n";
-      $no_checks = $this->filterNoKingCheck($possible_moves, $board, $this->position);
-      $this->arrayToEnglish($possible_moves);
-      return $no_checks;
+      return $this->filterNoKingCheck($possible_moves, $board, $this->position);
     } else {
       return $possible_moves;
     }
@@ -336,6 +343,7 @@ class Knight extends Piece
     );
     $onboard_moves = $this->filterNoOffBoardPossibles($all_moves, $board);
     $possible_moves = $this->filterNoFriendlyFire($onboard_moves, $board, $color);
+    
     if ($loop) {
       return $this->filterNoKingCheck($possible_moves, $board, $this->position);
     } else {
@@ -367,6 +375,7 @@ class Bishop extends Piece
   {
     $deltas = $this->diagonal_deltas;
     $possible_moves = $this->getDeltaLines($deltas, $this->position, $board);
+    
     if ($loop) {
       return $this->filterNoKingCheck($possible_moves, $board, $this->position);
     } else {
@@ -446,7 +455,7 @@ class King extends Piece
       return $this->filterNoKingCheck($possible_moves, $board, $this->position);
     } else {
       return $possible_moves;
-    }                                                                                            
+    }                                                                                           
   }
 }
 ?>

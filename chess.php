@@ -71,6 +71,9 @@ class Game
     while (!$this->isCheckMate($current_player->color)) {
       $current_player = (($this->turn % 2 == 0) ? $this->white : $this->black);
       $king = $this->board->findKing($current_player->color);
+
+      //echo($king->arrayToEnglish($this->board->getAllPossibleMoves("White", $loop = true))) . "\n";
+
       if ($king->isCheck($king, $this->board)) {
         echo "\n\n holy crap, you're in check \n\n";
       }
@@ -167,7 +170,7 @@ class Game
   **/
   public function isCheckMate($color)
   {
-    return (count($this->board->getAllPossibleMoves($color, $loop = true)) == 1);
+    return (count($this->board->getAllPossibleMoves($color, $loop = true)) == 0);
   }
 
   /** 
