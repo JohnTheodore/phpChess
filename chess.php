@@ -68,14 +68,15 @@ class Game
   public function play()
   {
     $current_player = $this->white;
-    while (!$this->isCheckMate($current_player)) {
+    while ($this->isCheckMate($current_player)) {
       $current_player = (($this->turn % 2 == 0) ? $this->white : $this->black);
       $this->interface->displayBoard($this->board->board);
       $current_move = $this->getValidMove($current_player);
       $this->turn++;
       $this->makeMove($current_move);
     }
-    announceCheckMate($this->getColorsNames($this->board->findKing($current_player->color)));
+    $names = $this->getColorsNames($this->board->findKing($current_player->color));
+    $this->interface->announceCheckMate($names);
   }
 
   /** 
@@ -151,7 +152,7 @@ class Game
   **/
   public function isCheckMate($color)
   {
-    return (count($this->board->getAllPossibleMoves($color)) > 0);
+    return (count($this->board->getAllPossibleMoves($color)) == 0);
   }
 
   /** 

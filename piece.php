@@ -102,10 +102,10 @@ class Piece
   public function filterNoKingCheck(Array $positions, Board $board, array $src)
   {
     $no_king_check_array = array();
-    $piece_copy = clone $board->get($src);
+    $piece_copy = unserialize(serialize($board->get($src)));
     $king = $board->findKing($piece_copy->color);
     foreach ($positions as $position) {
-      $board_copy = clone $board;
+      $board_copy = unserialize(serialize($board));
       $board_copy->move($piece_copy->position, $position);
       if (!$this->isCheck($king, $board_copy)) {
         array_push($no_king_check_array, $position);
