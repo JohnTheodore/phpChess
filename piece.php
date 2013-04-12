@@ -118,8 +118,8 @@ class Piece
   * This method receives a copied board object, with moves some of which
   * might put the king into check. It returns false when not.
   *
-  * @param Object $king  is being used to find if that king is in check.
-  * @param Board  $board will be used as a fake board, to find out where
+  * @param Object $enemy_color is being used to find if that king is in check.
+  * @param Board  $board       will be used as a fake board, to find out where
   * moves are allowed and where they are not allowed.
   *
   * @return boolean true means the $king is in check, false is not in check.
@@ -133,10 +133,9 @@ class Piece
   }
 
   /**
-  * desc
+  * Converts 2D array style (0,0), (1,1) to a8, b7, etc.
   *
-  * @param array $positions_array contains something like (0, 0) and outputs
-  * something like a2
+  * @param array $positions_array contains something like (0, 0)
   *
   * @return string eg. a2
   **/
@@ -176,7 +175,7 @@ class Piece
       $possible_moves[] = $current_square;
       if ((is_object($board->Get($current_square))) 
           && ($src_piece->color != $board->Get($current_square)->color)
-      ) { 
+      ) {
         break; 
       }
       $current_square = array( ($current_square[0] + $delta[0]), 
@@ -231,45 +230,109 @@ class Pawn extends Piece
   **/
   public function getPossibleMoves(Board $board, $loop = true)
   {
-    $row = $this->position[0]; // there is code smell here
-    $col = $this->position[1]; // the cyclomatic complexity is too high
-    $moves = $this->moves;
+    $src_row = $this->position[0];
+    $src_col = $this->position[1];
     $direction = (($this->color == "White") ? -1 : 1);
-    $possible_moves = array();
-    if ($board->Get(array(($row + $direction), $col)) == null) {
-      // allowed to go one forward if the space is empty.
-      $possible_moves[] = array( ($row + $direction), $col);
+
+    $forward = $this->getForwardMoves($board, $src_row, $src_col, $direction);
+    $diagonal = $this->getDiagMoves($board, $src_row, $src_col, $direction);
+    //$enpassant = $this->getEnPassant($board, $src_row, $src_col, $direction);
+    $possibles = array_merge($forward, $diagonal);
+
+    if ($loop) {
+      return $this->filterNoKingCheck($possibles, $board, $this->position);
+    } else {
+      return $possibles;
     }
-    if (($moves == 0) && ($board->get(array(($row + $direction), $col)) == null) 
-        && ($board->Get(array(($row + $direction*2), $col)) == null)
-    ) { // allowed to go two forward if both spaces open
-      $possible_moves[] = array( ($row + $direction*2), $col);
-    }
+  }
+
+  /**
+  * Gives forward diagonal moves if there is an enemy piece there.
+  *
+  * @param Board   $board     which contains all the positions of all pieces.
+  * @param array   $src_row   is the moving piece current row
+  * @param array   $src_col   is the moving piece current column
+  * @param integer $direction is -1 (up), or 1(down), depending on white/black
+  *
+  * @return array with possible forward moves. (not considering check)
+  **/
+  public function getDiagMoves(Board $board, $src_row, $src_col, $direction)
+  {
+    $possibles = array();
     foreach (array(-1, 1) as $diagonal) {
-      $attackee = array(($row + $direction), $col + $diagonal);
+      $attackee = array(($src_row + $direction), $src_col + $diagonal);
       if (is_object($board->Get($attackee))
           && ($board->Get($attackee)->color != $this->color)
-      ) { // allowed to attack diagonally
-        $possible_moves[] = array(($row + $direction), $col + $diagonal);
+      ) {
+        $possibles[] = array(($src_row + $direction), $src_col + $diagonal);
       }
     }
-    if ($loop) {
-      return $this->filterNoKingCheck($possible_moves, $board, $this->position);
-    } else {
-      return $possible_moves;
+    return $possibles;
+  }
+
+  /**
+  * Gives the forward moves available for a Pawn.
+  *
+  * @param Board   $board     which contains all the positions of all pieces.
+  * @param array   $src_row   is the moving piece current row
+  * @param array   $src_col   is the moving piece current column
+  * @param integer $direction is -1 (up), or 1(down), depending on white/black
+  *
+  * @return array with possible forward moves. (not considering check)
+  **/
+  public function getForwardMoves(Board $board, $src_row, $src_col, $direction)
+  {
+    $moves = $this->moves;
+    $one_forward = $board->Get(array(($src_row + $direction), $src_col));
+    $two_forward = $board->Get(array(($src_row + $direction * 2), $src_col));
+    $possible_moves = array();
+    if ($one_forward == null) {
+      $possible_moves[] = array( ($src_row + $direction), $src_col);
     }
+    if ( ($moves == 0) && ($one_forward == null) && ($two_forward == null)
+    ) {
+      $possible_moves[] = array( ($src_row + $direction * 2), $src_col);
+    }
+    return $possible_moves;
+  }
+
+  /**
+  * If an en passant move is available, it returns it. In order to capture
+  * the enemy, there is corner case logic inside Chess::makeMove()
+  *
+  * @param Board   $board     which contains all the positions of all pieces.
+  * @param array   $src_row   is the moving piece current row
+  * @param array   $src_col   is the moving piece current column
+  * @param integer $direction is -1 (up), or 1(down), depending on white/black
+  *
+  * @return array with possible moves for en pasasnt
+  **/
+  public function getEnPassant(Board $board, $src_row, $src_col, $direction)
+  {
+    $possibles = array();
+    $last_move = end($board->moves_history);
+    $src_piece = $board->get(array($src_row, $src_col));
+    if ($src_piece->color == 'White') {
+      $fifthrank = 3;
+    } else {
+      $fifthrank = 4;
+    }
+    if ( (count($last_move) > 0)
+        && ($last_move[0][0] == (($direction * 2) + $fifthrank))
+        && ( end($last_move)[1][0] == $fifthrank)
+        && ($fifth_rank == $src_row)
+        && (get_class($board->get(end(end($last_move)))) == "Pawn" )
+        && (( abs($src_col - end($last_move)[1][1]) == 1))
+    ) {
+      echo "holy crap, en passant";
+      $move = array( ($src_row + $direction),( end($last_move[1][1]) ) );
+      array_push($possibles, $move);
+    }
+    return $possibles;
   }
 }
 
-/** 
-* Rook piece class which has one method returning available moves.
-*
-* @category Chess
-* @package  Rook_Piece
-* @author   John Theodore <JohnTheodore@github.com>
-* @license  MIT License
-* @link     www.github.com/JOhnTheodore/phpChess
-**/
+/** **/
 class Rook extends Piece
 {
   /**

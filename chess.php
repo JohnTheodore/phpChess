@@ -36,7 +36,6 @@ class Game
   public $white;
   public $black;
   public $interface;
-  public $moves_history;
 
   /** 
   * Sets $this->board to new Board, which is an empty 2D array
@@ -55,10 +54,9 @@ class Game
     $this->board = new Board;
     $this->turn = 0;
     $this->captured_pieces = array();
-    $this->moves_history = array();
   }
 
-  /** 
+  /**
   * This is the main play loop, it sets the current player based on $this->turn
   * then gets a move from the player. The move is validated by getValidMove().
   * Finally the move is executed with makeMove();
@@ -74,8 +72,8 @@ class Game
       $enemy_color = ($king->color == "White") ? "Black" : "White";
     
       if ($king->isCheck($enemy_color, $this->board)) {
-        $name = $current_player->name;
-        echo "\n\n holy crap, {$name} is in check \n\n";
+        $names = $this->getColorsNames($king);
+        $this->interface->announceCheck($names);
       }
 
       $this->interface->displayBoard($this->board->board);
@@ -87,6 +85,7 @@ class Game
       $current_player = (($this->turn % 2 == 0) ? $this->white : $this->black);
       $this->makeMove($current_move);
     }
+    $this->interface->displayBoard($this->board->board);
     $names = $this->getColorsNames($this->board->findKing($current_player->color));
     $this->interface->announceCheckMate($names);
   }
@@ -101,16 +100,14 @@ class Game
   **/
   public function isCheckMate($color)
   {
-    var_dump(count($this->board->getAllPossibleMoves($color, true)) == 0);
-    var_dump($color);
     return (count($this->board->getAllPossibleMoves($color, true)) == 0);
   }
 
 
   public function getInfo($color)
   {
-    var_dump($color);
-    var_dump(count($this->board->getAllPossibleMoves($color, true)));
+    $total = (count($this->board->getAllPossibleMoves($color, true)));
+    echo "\nTotal quantity of moves available: {$total}\n";
   }
 
   /** 
@@ -159,19 +156,14 @@ class Game
     } elseif ($src_piece->color != $player->color) { 
       echo "wrong color\n"; return false; 
     } elseif ($src == $dest) {
-      // Only move your own piece. 
       echo "different pls\n"; return false; 
     } elseif ($src_piece == null) { 
-      // src and dest should be different
       echo "no piece\n"; return false; 
     } elseif (($dest_piece != null) && ($src_piece->color == $dest_piece->color)) {
-      // There is no piece at that src 
       echo "no friendly fire\n"; return false; 
     } elseif ( $this->isPossibleMove($src_piece, $dest) ) { 
-      // no friendly fire
       return true; 
-    } else { // allow the move only if the piece getPossibleMoves
-      // contains the dest position
+    } else {
       return false;
     }
   }

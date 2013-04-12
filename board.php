@@ -25,6 +25,7 @@ class Board
 {
 
   public $board;
+  public $moves_history = array();
 
   /** set the $board instance variable **/
   public function __construct()
@@ -103,6 +104,7 @@ class Board
     $mobile_piece = ($this->get($src));
     $mobile_piece->position = $dest;
     $mobile_piece->moves++;
+    array_push($this->moves_history, array($src, $dest));
     $this->board[$src[0]][$src[1]] = null;
     $this->board[$dest[0]][$dest[1]] = $mobile_piece;
   }
