@@ -307,29 +307,29 @@ class Pawn extends Piece
   *
   * @return array with possible moves for en pasasnt
   **/
-  public function getEnPassant(Board $board, $src_row, $src_col, $direction)
-  {
-    $possibles = array();
-    $last_move = end($board->moves_history);
-    $src_piece = $board->get(array($src_row, $src_col));
-    if ($src_piece->color == 'White') {
-      $fifthrank = 3;
-    } else {
-      $fifthrank = 4;
-    }
-    if ( (count($last_move) > 0)
-        && ($last_move[0][0] == (($direction * 2) + $fifthrank))
-        && ( end($last_move)[1][0] == $fifthrank)
-        && ($fifth_rank == $src_row)
-        && (get_class($board->get(end(end($last_move)))) == "Pawn" )
-        && (( abs($src_col - end($last_move)[1][1]) == 1))
-    ) {
-      echo "holy crap, en passant";
-      $move = array( ($src_row + $direction),( end($last_move[1][1]) ) );
-      array_push($possibles, $move);
-    }
-    return $possibles;
-  }
+  // public function getEnPassant(Board $board, $src_row, $src_col, $direction)
+  // {
+  //   $possibles = array();
+  //   $last_move = end($board->moves_history);
+  //   $src_piece = $board->get(array($src_row, $src_col));
+  //   if ($src_piece->color == 'White') {
+  //     $fifthrank = 3;
+  //   } else {
+  //     $fifthrank = 4;
+  //   }
+  //   if ( (count($last_move) > 0)
+  //       && ($last_move[0][0] == (($direction * 2) + $fifthrank))
+  //       && ( end($last_move)[1][0] == $fifthrank)
+  //       && ($fifth_rank == $src_row)
+  //       && (get_class($board->get(end(end($last_move)))) == "Pawn" )
+  //       && (( abs($src_col - end($last_move)[1][1]) == 1))
+  //   ) {
+  //     echo "holy crap, en passant";
+  //     $move = array( ($src_row + $direction),( end($last_move[1][1]) ) );
+  //     array_push($possibles, $move);
+  //   }
+  //   return $possibles;
+  // }
 }
 
 /** **/
